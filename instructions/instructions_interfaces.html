@@ -1,7 +1,29 @@
-<!DOCTYPE html>
-
 <html>
-    
+<br/>
+<h1>How to Use the Interface</h1>
+<br/>
+<img src="http://de9gdh88sy4yi.cloudfront.net/interface_3.jpg" />
+<br/><br/>
+<li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
+<br/>
+<li>BOX #1 is the movie control area. Using buttons, you can play/pause the video, move 1 frame backward or forward, and move 1 second backward or forward. You can also use the slider bar to navigate anywhere from 3 seconds backward to 3 seconds forward.</li>
+<br/>
+<li>BOX #2 is the video selection area. After finding an instance of the behavior (like grasping a cup or slicing a cucumber) you are looking for, find the EXACT beginning time and press the "Set Start Time" button. Then, find the EXACT ending time of the behavior and press the "Set End Time" button. You can check your selection by pressing the "Play Selection" button.</li>
+<br/>
+<li>BOX #3 is the annotation (saving) area. Once you find the EXACT starting and ending times, press the "Annotate" button to save your selection.</li>
+<br/>
+<li>BOX #4 allows you to replay, edit or delete a saved annotation. When you press the "Edit" button, BOX #3 shows different options that allow you to either update or cancel editing.</li>
+<br/>
+<li>You can do the annotations a lot faster by using the keyboard hotkeys!!!</li>
+<br/>
+<li>Play around with the interface for a while to make sure you are comfortable with it before doing the actual qualification task (SEE BELOW).</li>
+
+<br/><br/><br/><br/>
+
+
+
+
+
 <style type="text/css">
 #pageContainer {
     width: 800px;
@@ -299,7 +321,7 @@
         resetSliderPosition();
     }
  
-    function moveCurrentTime(direction, frameOrSec, stepSize, fixedRange) {
+     function moveCurrentTime(direction, frameOrSec, stepSize, fixedRange) {
         var stepSizeInSec;
         
         pause();
@@ -592,44 +614,20 @@
 
 
 <div id="pageContainer">
-    <div id="instructions">
+    <!--div id="instructions">
         <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
-        </br>
-        <div id="instructionsImg" width="780" height="320">
-            <h2>Task Instructions</h1>
-            <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
-            <br/>
-            <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.ubc.ca/~troniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
-            <br/>
-            <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
-            <br/>
-            <li>An ACTION is defined as an UNAMBIGUOUS sequence of motions performed by the PRIMARY subject.</li>
-            <br/>
-            <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
-            <br/>
-            <li>Acceptable work contains at least FIVE clear ACTION annotation with PRECISE start- and end-timing.</li>
-            <br/>
-            <li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>
-            <br/>
-            <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
-            <br/>
-        </div>
-        <!--input id="b_hideShowInstructionsInterface" class="hideShowInstructionsButton" value="How-to Use Interface" onclick="hideShowInstructionsInterface()" type="button"-->
-        <!--/br-->
-        <!--<img id="instructionsImg" src="http://www.ict.usc.edu/~park/instructions_pilot_test2.jpg"></img-->
-        <!--iframe id="instructionsInterface" width="780" height="500" src="instructions/instructions_interfaces.html" style="display:none"></iframe-->
-    </div>
+        <img id="instructionsImg" src="http://www.ict.usc.edu/~park/instructions_pilot_test2.jpg"></img>
+    </div-->
 
     <div id="movieArea">
         <video tabindex="0" id="video" controls="controls" onmouseup="movieControlSeeked()" onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
-        <source src="${video_url_mp4}#t=${start_time},${end_time}" type="video/mp4" />
-        <source src="${video_url_webm}#t=${start_time},${end_time}" type="video/webm" />
+            <source src="http://www.cs.ubc.ca/~troniak/rgb-04-1.webm" type="video/webm">
             <!--source src="rtmp://s2j00tovztwg6f.cloudfront.net/cfx/st/mp4:73jzhE8R1TQ_x264.mp4" type="video/mp4"-->
             <!--source src="file:///C:\Users\park\Desktop\web_annotation_tool\experiments\youtube_movie_reviews\selected_videos\mp4\73jzhE8R1TQ_x264.mp4" type="video/mp4"-->
             <!--source src="file:///C:\Users\park\Desktop\web_annotation_tool\experiments\youtube_movie_reviews\selected_videos\mp4_1min\yMQ9WeIZTNU_x264_1min.mp4" type="video/mp4"-->
             <!--source src="file:///C:/Users/park/Desktop/Af8D0E4ZXaw_libtheora.ogv" type="video/ogg"-->
             <!--source src="file:///C:/Users/park/Desktop/Af8D0E4ZXaw_libtheora.ogv" type="video/ogg"-->
-            <!--source src="file:///C:\Users\park\Desktop\colour_3.26.2012_10.56_pt1_VP8.webm" type="video/webm"->
+            <!--source src="http://de9gdh88sy4yi.cloudfront.net/FuR4VwKrCU0_VP8.webm" type="video/webm"-->
             <!--source src="https://s3.amazonaws.com/webtool_experiment/videos_webm_inhouse/yMQ9WeIZTNU_VP8.webm" type="video/webm"-->
         </video>
     </div>
@@ -722,4 +720,6 @@
 </div>
 
 </body>
+
+
 </html>
