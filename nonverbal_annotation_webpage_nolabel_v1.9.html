@@ -613,7 +613,10 @@
             <br/>
             <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
             <br/>
+            <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
+            <br/>
         </div>
+            <br/>
         <!--input id="b_hideShowInstructionsInterface" class="hideShowInstructionsButton" value="How-to Use Interface" onclick="hideShowInstructionsInterface()" type="button"-->
         <!--/br-->
         <!--<img id="instructionsImg" src="http://www.ict.usc.edu/~park/instructions_pilot_test2.jpg"></img-->
@@ -621,17 +624,30 @@
     </div>
 
     <div id="movieArea">
-        <video tabindex="0" id="video" controls="controls" onmouseup="movieControlSeeked()" onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
-        <source src="${video_url_mp4}#t=${start_time},${end_time}" type="video/mp4" />
-        <source src="${video_url_webm}#t=${start_time},${end_time}" type="video/webm" />
-            <!--source src="rtmp://s2j00tovztwg6f.cloudfront.net/cfx/st/mp4:73jzhE8R1TQ_x264.mp4" type="video/mp4"-->
-            <!--source src="file:///C:\Users\park\Desktop\web_annotation_tool\experiments\youtube_movie_reviews\selected_videos\mp4\73jzhE8R1TQ_x264.mp4" type="video/mp4"-->
-            <!--source src="file:///C:\Users\park\Desktop\web_annotation_tool\experiments\youtube_movie_reviews\selected_videos\mp4_1min\yMQ9WeIZTNU_x264_1min.mp4" type="video/mp4"-->
-            <!--source src="file:///C:/Users/park/Desktop/Af8D0E4ZXaw_libtheora.ogv" type="video/ogg"-->
-            <!--source src="file:///C:/Users/park/Desktop/Af8D0E4ZXaw_libtheora.ogv" type="video/ogg"-->
-            <!--source src="file:///C:\Users\park\Desktop\colour_3.26.2012_10.56_pt1_VP8.webm" type="video/webm"->
-            <!--source src="https://s3.amazonaws.com/webtool_experiment/videos_webm_inhouse/yMQ9WeIZTNU_VP8.webm" type="video/webm"-->
+        <video tabindex="0" id="video" controls="controls" onmouseup="movieControlSeeked()" 
+                onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
+            <source src="${video_url_mp4}#t=${start_time},${end_time}" type="video/mp4" />
+            <source src="${video_url_webm}#t=${start_time},${end_time}" type="video/webm" />
+            <source src="http://www.cs.ubc.ca/~troniak/test.webm" type="video/webm" />
         </video>
+      <!-- Video -->
+      <!--video id="video" width="640" height="365">
+        <source src="videos/mikethefrog.webm" type="video/webm">
+        <source src="videos/mikethefrog.ogv" type="video/ogv">
+        <source src="videos/mikethefrog.mp4" type="video/mp4">
+        <p>
+          Your browser doesn't support HTML5 video.
+          <a href="videos/mikethefrog.mp4">Download</a> the video instead.
+        </p>
+      </video-->
+      <!-- Video Controls -->
+      <!--div id="video-controls">
+        <button type="button" id="play-pause">Play</button>
+        <input type="range" id="seek-bar" value="0">
+        <button type="button" id="mute">Mute</button>
+        <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
+        <button type="button" id="full-screen">Full-Screen</button>
+      </div-->
     </div>
 
     
