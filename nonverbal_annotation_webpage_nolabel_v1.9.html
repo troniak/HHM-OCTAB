@@ -244,6 +244,8 @@
     var pausedTime = 0;
     var annotEditMode = false;
     var editAnnotID = null;
+    var video_start_time = 30;
+    var video_end_time = 50;
     
     
     function init() {
@@ -267,8 +269,13 @@
         seek_bar.addEventListener("mouseup", function() { pause(); });
         // cause video time to follow value of seek_bar 
         seek_bar.addEventListener("change", updateVidTime);
+        
     }
-  
+
+    window.onload = function() {
+        video.currentTime = video_start_time;
+    }
+
     function KeyInputCheck() {
         var keyCode = event.keyCode;
 
@@ -388,17 +395,18 @@
 
     function getVidTime(barValue, barMax){
         var seek_mult = barValue / barMax;
-        var time = 0.14 + (video.duration - 0.14) * seek_mult;
+        var time = video_start_time + (video_end_time - video_start_time) * seek_mult;
         return time;
     }
     function getBarValue(vidTime, seek_max){
         //alert(vidTime);
-        var value = (vidTime - 0.14) / (video.duration - 0.14) * seek_max;
+        var value = (vidTime - video_start_time) / (video_end_time - video_start_time) * seek_max;
         //alert('value: ' + value);
         return value;
     }
     function setVidTime(time){
-        video.currentTime = time;
+        video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
+        //video.currentTime = time;
         seek_bar.value = getBarValue(time, seek_bar.max);
     }
     
@@ -406,9 +414,9 @@
     function updateSeekBar(){
         var value = getBarValue(video.currentTime, seek_bar.max);
         seek_bar.value = value;
-        //if(video.paused == false && seek_bar.value >= seek_bar.max){
-        //    pause();
-        //}
+        if(video.paused == false && seek_bar.value == seek_bar.max){
+            pause();
+        }
     }
     // Update the video time from seekBar value
     function updateVidTime() {
@@ -421,15 +429,17 @@
     
     function gotoStart() {
         pause();
-        setVidTime(0.0);
+        setVidTime(video_start_time);
+        pausedTime = video.currentTime - EPSILON;
         //video.currentTime = 0.0;
     }
     
     function gotoEnd() {
         pause();
-        setVidTime(video.duration);
+        setVidTime(video_end_time);
         //video.currentTime = video.duration;
         video.ended = false;
+        pausedTime = video.currentTime - EPSILON;
     }
    
     function setStartTimeText() {
