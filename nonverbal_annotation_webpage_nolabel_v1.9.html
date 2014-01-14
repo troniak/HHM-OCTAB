@@ -4,7 +4,7 @@
     
 <style type="text/css">
 #pageContainer {
-    width: 800px;
+    width: 850px;
     height: 600px;
     margin: 10px;
 }
@@ -552,10 +552,11 @@
             if( isValidTimeSelection() == true ) {
                 var annotEle = document.getElementById(editAnnotID);
     
-                // Assumes the first and the second elements are start time and end time, respectively.
+                // Assumes the first three elements are start time, end time and tag, respectively.
                 annotEle.childNodes[0].value = startTimeText.value;
                 annotEle.childNodes[1].value = endTimeText.value;
-    
+                annotEle.childNodes[2].value = window.prompt("Please enter a tag for this ACTION",annotEle.childNodes[2].value);
+                
                 exitUpdateMode();
             }
         }
@@ -563,12 +564,15 @@
             if( isValidTimeSelection() == true ) {
                 annotCnt = annotCnt + 1;
                 annotID = "annot" + annotCnt;
+
+                var annotation_text = window.prompt("Please enter a tag for this ACTION","");
     
                 var newdiv = document.createElement("div");
                 newdiv.setAttribute("id", annotID);
                 // changing the order of the inputs below will affect "editAnnotation(divName, annotID)" function
                 newdiv.innerHTML = '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeText.value + '">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeText.value + '">';
+                newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + annotation_text + '">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button">';            
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="X" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button">';
@@ -589,6 +593,7 @@
             var prevAnnotEle = document.getElementById(editAnnotID);
             prevAnnotEle.childNodes[0].style.color = "black";
             prevAnnotEle.childNodes[1].style.color = "black";
+            prevAnnotEle.childNodes[2].style.color = "black";
         }        
 
         annotEditMode = false;
@@ -608,6 +613,7 @@
             var prevAnnotEle = document.getElementById(editAnnotID);
             prevAnnotEle.childNodes[0].style.color = "black";
             prevAnnotEle.childNodes[1].style.color = "black";
+            prevAnnotEle.childNodes[2].style.color = "black";
         }        
         
         annotEditMode = true;
@@ -616,13 +622,14 @@
         // Retrieve the annotation information back to the control area.
         var annotEle = document.getElementById(annotID);
         
-        // Assumes the first and the second elements are start time and end time, respectively.
+        // Assumes the first second elements are start time and end time, respectively.
         startTimeText.value = annotEle.childNodes[0].value;
         endTimeText.value = annotEle.childNodes[1].value;
 
 
         annotEle.childNodes[0].style.color = "red";
         annotEle.childNodes[1].style.color = "red";
+        annotEle.childNodes[2].style.color = "red";
 
         
         // Change the button text and layout in the annotation buttom area.
@@ -763,6 +770,7 @@
         <div id="annotationListInnerArea">
             <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start Time">
             <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End Time">
+            <input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="Tag">
             <hr>
         </div>
         
