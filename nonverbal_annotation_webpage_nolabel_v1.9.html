@@ -269,10 +269,11 @@
         // cause video time to follow value of seek_bar 
         seek_bar.addEventListener("change", updateVidTime);
 
+        //fix this when deploying to mturk!!
         //video_start_time = ${start_time};//30;
         //video_end_time = ${end_time};//50;
-        video_start_time = 30;
-        video_end_time = 50;
+        video_start_time = 0;
+        video_end_time = 30;
     }
 
     window.onload = function() {
@@ -328,6 +329,7 @@
 
     function pause() {
         if( toggleIsPlay == true ) {
+            //alert("pausing");
             pausedTime = getCurrentVidTime() - EPSILON;
             //pausedTime = video.currentTime - EPSILON;
             video.pause();
@@ -423,7 +425,17 @@
         video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
         //video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
         //video.currentTime = time;
-        seek_bar.value = getBarValue(time, seek_bar.max);
+        seek_bar.value = getBarValue(video.currentTime, seek_bar.max);
+    }
+    function setVidTimeRelative(time){
+        time = getRelativeTime(time);
+        video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
+        //video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
+        //video.currentTime = time;
+        seek_bar.value = getBarValue(video.currentTime, seek_bar.max);
+    }
+    function getRelativeTime(time){
+        return time + video_start_time;
     }
     
     // Calculate and update the seek_bar value from video time
@@ -521,26 +533,25 @@
             if( isValidTimeSelection() == true ) {
                 var startTime = parseFloat(startTimeText.value);
                 var endTime = parseFloat(endTimeText.value);
-    
-                setVidTime(startTime);
+
+                setVidTimeRelative(startTime);
                 //video.currentTime = startTime;
     
                 toggleIsPlayingSelection = true;
-                playingAndSetEndTime = endTime;
+                playingAndSetEndTime = getRelativeTime(endTime);
                 play();
             }
-
         }
         else { // play the selection of an already annotated instance in "annotationListInnerArea"
             var elem = document.getElementById(annotID);
             var startTime = parseFloat(elem.childNodes.item(0).value);
             var endTime = parseFloat(elem.childNodes.item(1).value);
             
-            setVidTime(startTime);
+            setVidTimeRelative(startTime);
             //video.currentTime = startTime;
     
             toggleIsPlayingSelection = true;
-            playingAndSetEndTime = endTime;
+            playingAndSetEndTime = getRelativeTime(endTime);
             play();
         }
         
@@ -726,7 +737,7 @@
     <div id="instructions">
         <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
         </br>
-        <div id="instructionsImg" width="780" height="320">
+        <div id="instructionsImg" >
             <h2>Task Instructions</h1>
             <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
             <br/>
@@ -734,7 +745,7 @@
             <br/>
             <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
             <br/>
-            <li>An ACTION is defined as an UNAMBIGUOUS sequence of motions performed by the PRIMARY subject.</li>
+            <li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>
             <br/>
             <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
             <br/>
