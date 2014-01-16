@@ -269,11 +269,14 @@
         // cause video time to follow value of seek_bar 
         seek_bar.addEventListener("change", updateVidTime);
 
-        //fix this when deploying to mturk!!
-        //video_start_time = ${start_time};//30;
-        //video_end_time = ${end_time};//50;
         video_start_time = 0;
         video_end_time = 30;
+        
+        //uncomment this when deploying to mturk!!
+        /*deploy_start
+        video_start_time = ${start_time};
+        video_end_time = ${end_time};
+        deploy_end*/
     }
 
     window.onload = function() {
@@ -739,26 +742,25 @@
         </br>
         <div id="instructionsImg" >
             <h2>Task Instructions</h1>
-            <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
-            <br/>
-            <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.ubc.ca/~troniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
-            <br/>
-            <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
-            <br/>
-            <li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>
-            <br/>
-            <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
-            <br/>
-            <li>Acceptable work contains at least FIVE clear ACTION annotation with PRECISE start- and end-timing.</li>
-            <br/>
-            <li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>
-            <br/>
-            <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
-            <br/>
+            <ul>
+                <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
+                <br/>
+                <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.ubc.ca/~troniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
+                <br/>
+                <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
+                <br/>
+                <li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>
+                <br/>
+                <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
+                <br/>
+                <li>Acceptable work contains at least FIVE clear ACTION annotations with PRECISE start- and end-timing.</li>
+                <br/>
+                <li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>
+                <br/>
+                <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
+            </ul>
             <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
-            <br/>
         </div>
-        <br/>
     </div>
 
     <div id="movieArea">
@@ -848,8 +850,8 @@
         <div id="annotateButtonArea">
             <input id="b_annotate" value="Annotate" onclick="annotateOrUpdate('annotationListInnerArea')" type="button">
             <input id="b_cancel" style="visibility:hidden" value="Cancel" onclick="exitUpdateMode()" type="button">
-        </div>            
-    </div>    
+        </div>
+    </div>
     
     <div id="hotkeyInstArea">
         <b>Keyboard Hotkeys</b><br/>
