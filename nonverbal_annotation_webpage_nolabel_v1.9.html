@@ -44,6 +44,9 @@
 		color-stop(1, rgb(0,136,204))
 	);
 }
+video::-webkit-media-controls {
+  display:none !important;
+}
 
 #video-container {
 	width: 480px;
@@ -255,6 +258,8 @@
         currentTimeText = document.getElementById("t_currentTimeText");
         instructionElement = document.getElementById("instructionsImg");
         mySliderBar = document.getElementById("sliderBar");
+        label_minus = document.getElementById("label_minus");
+        label_plus = document.getElementById("label_plus");
        
         setInterval(function() {displayVideoCurrentTime();}, 1/FPS);
         setInterval(function() {checkAndPauseSelectionPlay();}, 1/FPS);
@@ -268,16 +273,33 @@
         seek_bar.addEventListener("mouseup", function() { pause(); });
         // cause video time to follow value of seek_bar 
         seek_bar.addEventListener("change", updateVidTime);
+        
+        video.addEventListener("dblclick", videoFullscreen);
 
         video_start_time = 0;
-        video_end_time = 30;
+        video_end_time = 10;
         
         //uncomment this when deploying to mturk!!
         /*deploy_start
         video_start_time = ${start_time};
         video_end_time = ${end_time};
         deploy_end*/
-    }
+
+        mySliderBar.min = 0 - video_end_time / 10.0;
+        mySliderBar.max = 0 + video_end_time / 10.0;
+        label_minus.innerHTML = mySliderBar.min.toString()+' sec';
+        label_plus.innerHTML = '+'+mySliderBar.max.toString()+' sec';
+    } 
+
+    function videoFullscreen(){
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.mozRequestFullScreen) {
+            video.mozRequestFullScreen(); // Firefox
+        } else if (video.webkitRequestFullscreen) {
+            video.webkitRequestFullscreen(); // Chrome and Safari
+        }
+    };
 
     window.onload = function() {
         video.currentTime = video_start_time;
@@ -290,7 +312,13 @@
             case 37: // Left arrow key input
                 moveCurrentTime('backward', 'frame', 1, false);
                 break;
+            case 188: // "," key input
+                moveCurrentTime('backward', 'frame', 1, false);
+                break;
             case 39: // Right arrow key input
+                moveCurrentTime('forward', 'frame', 1, false);
+                break;
+            case 190: // "." key input
                 moveCurrentTime('forward', 'frame', 1, false);
                 break;
             case 65: // "a" key input
@@ -302,8 +330,23 @@
             case 70: // "f" key input
                 playOrPause();
                 break;            
+            case 86: // "v" key input
+                moveCurrentTime('forward', 'frame', 1, false);
+                break;            
+            case 67: // "c" key input
+                moveCurrentTime('backward', 'frame', 1, false);
+                break;            
+            case 88: // "x" key input
+                moveCurrentTime('forward', 'second', 1, false);
+                break;            
+            case 90: // "z" key input
+                moveCurrentTime('backward', 'second', 1, false);
+                break;            
             case 83: // "s" key input
                 setStartTimeText();
+                break;            
+            case 27: // "esc" key input
+                videoFullscreen();
                 break;            
         }
     }
@@ -311,16 +354,26 @@
   
     function playOrPause() {
         if( toggleIsPlay == false ) {
+            video.playbackRate = Math.abs(video.playbackRate);
+            //setVidTime(getCurrentVidTime() - EPSILON);
             play();
         }
         else {
             pause();
         }
     }
+/*    function reverseOrPause() {
+        if( toggleIsPlay == false ) {
+            video.playbackRate = -1 * Math.abs(video.playbackRate);
+            play();
+        }
+        else {
+            pause();
+        }
+    }*/
 
     function play() {
         if( toggleIsPlay == false ) {
-            setVidTime(getCurrentVidTime() - EPSILON);
             //setVidTime(video.currentTime - EPSILON);
             //video.currentTime = video.currentTime - EPSILON;
             video.play();
@@ -767,8 +820,8 @@
         <div id="video-container">
             <video tabindex="0" id="video" onmouseup="movieControlSeeked()" 
                     onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
-                <source src="${video_url_mp4}#t=${start_time},${end_time}" type="video/mp4" />
-                <source src="${video_url_webm}#t=${start_time},${end_time}" type="video/webm" />
+                <source src="${video_url_mp4}" type="video/mp4" />
+                <source src="${video_url_webm}" type="video/webm" />
                 <source src="http://www.cs.ubc.ca/~troniak/test.webm" type="video/webm" />
             </video>
             <div id="video-controls">
@@ -797,9 +850,9 @@
         <input id="b_playOrPause" class="playOrPauseButton" value="Play/Pause" onclick="playOrPause()" type="button">
             
         <div id="sliderArea">
-            <label class="sliderLabels" for="l_label_minus2Secs">-3 secs</label>
+            <label id="label_minus" class="sliderLabels" for="l_label_minus2Secs"></label>
             <input id="sliderBar" class="sliderBar" type="range" min="-3.0" max="3.0" value="0" step=".04" onchange="adjustVideoWithSlider()">
-            <label class="sliderLabels" for="l_label_plus2Secs">+3 secs</label>
+            <label id="label_plus" class="sliderLabels" for="l_label_plus2Secs"></label>
         </div>        
             
         <input id="b_backwardOneSec" class="movieControls" value="<< 1 sec" onclick="moveCurrentTime('backward', 'second', 1, false)" type="button">
@@ -856,11 +909,14 @@
     <div id="hotkeyInstArea">
         <b>Keyboard Hotkeys</b><br/>
         Play/Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> f<br/>
-        << 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> left arrow key<br/>
-        >> 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> right arrow key<br/>
+        << 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;c<br/>
+        >> 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;v<br/>
+        << 1 sec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;z<br/>
+        >> 1 sec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;x<br/>
         Set Start Time ==> s<br/>
         Set End Time ==> e<br/>
         Annotate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> a<br/>
+        Fullscreen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;esc <br/>
     </div>
 
 </div>
