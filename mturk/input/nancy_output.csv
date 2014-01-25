@@ -1,0 +1,28 @@
+video_url_mp4,video_url_webm,title,start_time,end_time
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,reach,45.4699,46.0298
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,grasp,46.0298,46.2699
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,drag,46.2299,46.7498
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,release,46.7498,47.0298
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,retract right hand,47.0298,47.9899
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,aborted reach,46.3099,47.1899
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,retract hand,47.1899,47.7899
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,reach for other knife?,47.7899,48.5099
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,grasp knife,48.5099,48.63
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,hand to hand transfer,48.6899,49.59
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,put knife down,49.59,50.0099
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,reach with left hand,49.59,50.13
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,grasp left hand,50.1899,50.5499
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,peel up lid on cheese/tofu?,50.5499,51.81
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,reach right hand,50.31,50.67
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,grasp right hand,50.67,51.03
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,hold right hand,51.03,53.3699
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,more pulling on top of cheese/tofu,52.32,53.52
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,two hand transfer of cheese/tofu,53.52,54.42
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,release right hand,54.42,54.4799
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,reach for knife,54.4799,54.78
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,grasp and lift knife,54.78,55.08
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,move knife to cheese/tofu,55.08,55.6199
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,open top more,54.2999,54.96
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,switch left hand position for hold,54.96,55.68
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,switch left hand position again,55.68,56.88
+,http://www.cs.ubc.ca/~troniak/rgb-02-1.webm,cut slice of cheese/tofu,57.24,60.0
