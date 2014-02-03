@@ -3,7 +3,7 @@ import sys
 from numpy import arange
 
 headers = ['video_url_mp4', 'video_url_webm','title','start_time','end_time']
-url = 'http://cs.ubc.ca/~troniak/'
+url = 'http://cs.cmu.edu/~dtroniak/'
 input_filenames = sys.argv
 
 def init_csv(name,mode):
@@ -44,8 +44,8 @@ if(len(input_filenames) > 1):
                 absEndTime = float(baseTime)+float(endTime)
                 csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
 else:
-    videos = ['bike','50salad','cmu','pbj','tum']#,'julia']
-    start_times = [0.0,180.0,17.0,2.0,15.0]
+    videos = ['bike','50salad','cmu_salad','pbj','tum']#,'julia']
+    start_times = [0.0,180.0,120.0,2.0,15.0]
     vid_resolutions = [2.0, 5.0, 10.0, 20.0, 30.0]
     overlap_diviser = 1
     max_resolution = vid_resolutions[-1]

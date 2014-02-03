@@ -1,6 +1,6 @@
 video_url_mp4,video_url_webm,title,start_time,end_time
-http://cs.ubc.ca/~troniak/bike.mp4,http://cs.ubc.ca/~troniak/bike.webm,,0.0,30.0
-http://cs.ubc.ca/~troniak/50salad.mp4,http://cs.ubc.ca/~troniak/50salad.webm,,180.0,210.0
-http://cs.ubc.ca/~troniak/cmu.mp4,http://cs.ubc.ca/~troniak/cmu.webm,,17.0,47.0
-http://cs.ubc.ca/~troniak/pbj.mp4,http://cs.ubc.ca/~troniak/pbj.webm,,2.0,32.0
-http://cs.ubc.ca/~troniak/tum.mp4,http://cs.ubc.ca/~troniak/tum.webm,,15.0,45.0
+http://cs.cmu.edu/~dtroniak/bike.mp4,http://cs.cmu.edu/~dtroniak/bike.webm,,0.0,30.0
+http://cs.cmu.edu/~dtroniak/50salad.mp4,http://cs.cmu.edu/~dtroniak/50salad.webm,,180.0,210.0
+http://cs.cmu.edu/~dtroniak/cmu_salad.mp4,http://cs.cmu.edu/~dtroniak/cmu_salad.webm,,120.0,150.0
+http://cs.cmu.edu/~dtroniak/pbj.mp4,http://cs.cmu.edu/~dtroniak/pbj.webm,,2.0,32.0
+http://cs.cmu.edu/~dtroniak/tum.mp4,http://cs.cmu.edu/~dtroniak/tum.webm,,15.0,45.0

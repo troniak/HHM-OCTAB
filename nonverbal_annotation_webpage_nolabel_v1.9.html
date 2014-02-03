@@ -24,7 +24,7 @@
 	left: 0;
 	right: 0;
 	padding: 5px;
-	opacity: 0;
+	opacity: .9;
 	-webkit-transition: opacity .3s;
 	-moz-transition: opacity .3s;
 	-o-transition: opacity .3s;
@@ -294,8 +294,8 @@ video::-webkit-media-controls {
         
         video.addEventListener("dblclick", videoFullscreen);
 
-        video_start_time = 10;
-        video_end_time = 10.5;
+        video_start_time = 25.0;
+        video_end_time = 35.0;
         video_title = '';
         
         //uncomment this when deploying to mturk!!
@@ -371,6 +371,9 @@ video::-webkit-media-controls {
                 break;            
             case 83: // "s" key input
                 setStartTimeText();
+                break;            
+            case 13: // "enter" key input
+                submitForm();
                 break;            
             case 27: // "esc" key input
                 videoFullscreen();
@@ -545,6 +548,12 @@ video::-webkit-media-controls {
             pausedTime = getCurrentVidTime() - EPSILON;
             //pausedTime = video.currentTime - EPSILON;
         }
+    }
+
+    //submit form to MTurk
+    function submitForm(){
+        //alert('submitting');
+        document.getElementById("submitButton").click();
     }
 
     function isValidTime(time){
@@ -845,7 +854,7 @@ video::-webkit-media-controls {
             <ul>
                 <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
                 <br/>
-                <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.ubc.ca/~troniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
+                <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.cmu.edu/~dtroniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
                 <br/>
                 <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
                 <br/>
@@ -873,7 +882,8 @@ video::-webkit-media-controls {
                     onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
                 <source src="${video_url_mp4}" type="video/mp4" />
                 <source src="${video_url_webm}" type="video/webm" />
-                <source src="http://www.cs.ubc.ca/~troniak/test.webm" type="video/webm" />
+                <source src="http://www.cs.cmu.edu/~dtroniak/tum.webm" type="video/webm" />
+                <source src="http://www.cs.cmu.edu/~dtroniak/test.webm" type="video/webm" />
             </video>
             <div id="video-controls">
                 <input type="range" class="seek-bar" id="seek-bar" value="0" step="0.1" max="100">
@@ -969,7 +979,8 @@ video::-webkit-media-controls {
         Set Start Time ==> s<br/>
         Set End Time ==> e<br/>
         Annotate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> a<br/>
-        Fullscreen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;esc <br/>
+        Submit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;enter<br/>
+        <!--Fullscreen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;esc <br/>-->
     </div>
 
 </div>
