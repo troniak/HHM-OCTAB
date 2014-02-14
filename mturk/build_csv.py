@@ -3,8 +3,13 @@ import sys
 from numpy import arange
 
 headers = ['video_url_mp4', 'video_url_webm','title','start_time','end_time']
-url = 'http://cs.cmu.edu/~dtroniak/'
+url = 'http://cs.ubc.ca/~troniak/'
 input_filenames = sys.argv
+target_video = ''
+min_annotation_size = 0.5
+
+def url2name(url):
+    return url[url.rfind('/')+1:url.rfind('.')]
 
 def init_csv(name,mode):
     open(name+'.csv', mode).close()
@@ -18,31 +23,35 @@ def init_csv(name,mode):
         return csvreader
 
 if(len(input_filenames) > 1):
-    output_headers = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords', 'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime', 'SubmitTime', 'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds',
-            'LifetimeApprovalRate', 'Last30DaysApprovalRate', 'Last7DaysApprovalRate', 'Input.video_url_mp4', 'Input.video_url_webm', 'Input.start_time', 'Input.end_time', 'Answer.annotationText', 'Answer.endTimeList', 'Answer.startTimeList', 'Approve', 'Reject']
+    output_headers = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords', 'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime', 'SubmitTime', 'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 'Last7DaysApprovalRate', 'Input.video_url_mp4', 'Input.video_url_webm', 'Input.title', 'Input.start_time', 'Input.end_time', 'Answer.annotationText', 'Answer.endTimeList', 'Answer.noMoreActions', 'Answer.startTimeList']
     filenames = iter(input_filenames)
     next(filenames) #skip first input argument (script name)
-    output_name = next(filenames) #skip first input argument (script name)
+    if(len(input_filenames) > 3):
+        target_video = next(filenames)
+    output_name = next(filenames)
     csvwriter_all = init_csv('input/'+output_name,'w')
     for filename in filenames:
         csvreader = init_csv(filename,'r')
         rows = iter(csvreader)
         next(rows)
         for row in rows:
+            #print row
             mp4Filename = row[output_headers.index('Input.video_url_mp4')]
             webmFilename = row[output_headers.index('Input.video_url_webm')]
-            baseTime = row[output_headers.index('Input.start_time')]
-            #skip header element
-            videoTitles = iter(row[output_headers.index('Answer.annotationText')].split('|'))
-            startTimes = iter(row[output_headers.index('Answer.startTimeList')].split('|'))
-            endTimes = iter(row[output_headers.index('Answer.endTimeList')].split('|'))
-            next(videoTitles);
-            next(startTimes);
-            next(endTimes);
-            for videoTitle,startTime,endTime in zip(videoTitles,startTimes,endTimes):
-                absStartTime = float(baseTime)+float(startTime)
-                absEndTime = float(baseTime)+float(endTime)
-                csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
+            if(target_video != '' and url2name(webmFilename) == target_video):
+                baseTime = row[output_headers.index('Input.start_time')]
+                #skip header element
+                videoTitles = iter(row[output_headers.index('Answer.annotationText')].split('|'))
+                startTimes = iter(row[output_headers.index('Answer.startTimeList')].split('|'))
+                endTimes = iter(row[output_headers.index('Answer.endTimeList')].split('|'))
+                next(videoTitles);
+                next(startTimes);
+                next(endTimes);
+                for videoTitle,startTime,endTime in zip(videoTitles,startTimes,endTimes):
+                    if(abs(float(startTime)-float(endTime)) > min_annotation_size):
+                        absStartTime = float(baseTime)+float(startTime)
+                        absEndTime = float(baseTime)+float(endTime)
+                        csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
 else:
     videos = ['bike','50salad','cmu_salad','pbj','tum']#,'julia']
     start_times = [0.0,180.0,120.0,2.0,15.0]

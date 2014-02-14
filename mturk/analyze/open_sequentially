@@ -1,0 +1,9 @@
+#!/bin/bash
+cd $1
+for f in *.html
+do
+    open -a "Google Chrome" $f
+    echo "press enter..."
+    read
+done
+cd ..

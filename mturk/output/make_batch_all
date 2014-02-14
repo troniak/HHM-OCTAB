@@ -1,0 +1,8 @@
+#!/bin/bash
+mv ~/Downloads/Batch_1395757_batch_results.csv .
+mv ~/Downloads/Batch_1405274_batch_results.csv .
+cp Batch_1395757_batch_results.csv temp1
+#echo $'' >> temp1
+tail -n +2 Batch_1405274_batch_results.csv >> temp2
+cat temp1 temp2 >> batch_all.csv
+rm temp1 temp2

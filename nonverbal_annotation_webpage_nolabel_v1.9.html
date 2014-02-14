@@ -24,7 +24,7 @@
 	left: 0;
 	right: 0;
 	padding: 5px;
-	opacity: .9;
+	opacity: .7;
 	-webkit-transition: opacity .3s;
 	-moz-transition: opacity .3s;
 	-o-transition: opacity .3s;
@@ -240,6 +240,18 @@ video::-webkit-media-controls {
 
 <body>
 
+<script src="jquery.js"></script>
+<script src="jquery.nouislider.min.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery.nouislider.css">
+
+<script>
+    $(function(){
+        $('.noUiSlider').noUiSlider({
+             range: [10,40]
+            ,start: [20,30]
+        });
+    });
+</script>
 
 <script type="text/javascript">
     var video;
@@ -265,6 +277,8 @@ video::-webkit-media-controls {
     var label_minus;
     var label_plus;
     var label_title;
+
+
     
     function init() {
         video = document.getElementById("video");
@@ -278,6 +292,7 @@ video::-webkit-media-controls {
         label_minus = document.getElementById("labelMinus");
         label_plus = document.getElementById("labelPlus");
         label_title = document.getElementById("label_title");
+
        
         setInterval(function() {displayVideoCurrentTime();}, 1/FPS);
         setInterval(function() {checkAndPauseSelectionPlay();}, 1/FPS);
@@ -302,7 +317,8 @@ video::-webkit-media-controls {
         /*deploy_start
         video_start_time = ${start_time};
         video_end_time = ${end_time};
-        video_title = '${title}';
+        //video_title = '${title}';
+        video_title = ''; //don't allow title to be seen when deployed
         deploy_end*/
 
         mySliderBar.min = 0 - Math.ceil((video_end_time-video_start_time) / 10.0);
@@ -317,6 +333,15 @@ video::-webkit-media-controls {
             label_title.style.display = "";
         }
     } 
+
+    function get_random_color() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.round(Math.random() * 15)];
+        }
+        return color;
+    }
 
     function videoFullscreen(){
         if (video.requestFullscreen) {
@@ -888,6 +913,12 @@ video::-webkit-media-controls {
             <div id="video-controls">
                 <input type="range" class="seek-bar" id="seek-bar" value="0" step="0.1" max="100">
             </div>
+            <div class="noUiSlider"></div>
+            <div class="noUiSlider"></div>
+            <div class="noUiSlider"></div>
+            <div class="noUiSlider"></div>
+            <div class="noUiSlider"></div>
+            <div class="noUiSlider"></div>
         </div>
     </div>
 
@@ -984,6 +1015,7 @@ video::-webkit-media-controls {
     </div>
 
 </div>
+
 
 </body>
 </html>

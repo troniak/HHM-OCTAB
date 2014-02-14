@@ -1,0 +1,2 @@
+#!/bin/bash
+open -a "Google Chrome" nonverbal_annotation_webpage_nolabel_v1.9.html 
