@@ -2,7 +2,14 @@
 cp nonverbal_annotation_webpage_nolabel_v1.9.html deploy_nonverbal_annotation_webpage_nolabel_v1.9.html
 perl -pi -w -e 's/deploy_end\*\//\/*deploy_end*\//g;' deploy_nonverbal_annotation_webpage_nolabel_v1.9.html
 perl -pi -w -e 's/\/\*deploy_start/\/*deploy_start*\//g;' deploy_nonverbal_annotation_webpage_nolabel_v1.9.html
-scp nonverbal_annotation_webpage_nolabel_v1.9.html dtroniak@linux.gp.cs.cmu.edu:www/hhm_hit.html
-scp instructions/instructions_interface.html dtroniak@linux.gp.cs.cmu.edu:www/hhm_instructions_interface.html
+
+if [ $1 == 'cmu' ]; then
+    scp nonverbal_annotation_webpage_nolabel_v1.9.html dtroniak@linux.gp.cs.cmu.edu:www/hhm_hit.html
+    scp instructions/instructions_interface.html dtroniak@linux.gp.cs.cmu.edu:www/hhm_instructions_interface.html
+else
+    scp nonverbal_annotation_webpage_nolabel_v1.9.html troniak@remote.cs.ubc.ca:public_html/hhm_hit.html
+    scp instructions/instructions_interface.html troniak@remote.cs.ubc.ca:public_html/hhm_instructions_interface.html
+fi
+
 cat deploy_nonverbal_annotation_webpage_nolabel_v1.9.html | pbcopy
 echo 'source copied to clipboard! paste directly into MTurk designer'
