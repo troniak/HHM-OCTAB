@@ -1,4 +1,4 @@
-video_url_mp4,video_url_webm,title,start_time,end_time
+video_url_mp4,video_url_webm,title,start_time,end_time,gt_start_times,gt_end_times,gt_tags
 http://cs.ubc.ca/~troniak/50salad.mp4,http://cs.ubc.ca/~troniak/50salad.webm,,20.0,30.0
 http://cs.ubc.ca/~troniak/50salad.mp4,http://cs.ubc.ca/~troniak/50salad.webm,,30.0,40.0
 http://cs.ubc.ca/~troniak/50salad.mp4,http://cs.ubc.ca/~troniak/50salad.webm,,40.0,50.0
