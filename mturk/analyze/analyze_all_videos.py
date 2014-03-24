@@ -7,63 +7,130 @@ from numpy import array
 import numpy as np
 import os
 import shutil
-from io_utils import *
-from utils import *
 from matplotlib import pyplot as plt
 import itertools
-from mturk import *
-from pylab import *
+import boto.mturk.connection as conn
+import boto.mturk.qualification as qual
 
-mturk = new_mturk_connection()
+mturk = conn.MTurkConnection(aws_access_key_id='AKIAJUL53VTH3ENYMNIQ', aws_secret_access_key='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', is_secure=True, port=None, proxy=None, proxy_port=None, proxy_user=None, proxy_pass=None, host=None, debug=0, https_connection_factory=None, security_token=None, profile_name=None)
 
+headers = ['video_url_mp4', 'video_url_webm','title','start_time','end_time']
 url = 'http://cs.ubc.ca/~troniak/'
 template_name = 'template.html'
+qualified_workers = ['A248D5XVN1YGCZ', 'A2QAJ8BJ5QBB9A', 'A2WRSEO8HQRG5K', 'A37P0EXFVTAP0D', 'A38KIO2400LOTJ', 'A3DY78Q4FCWTXX', 'A3N87BX6PS0SIB', 'A9XWAWNLJN8DA']
+action_annotation_type_id = '276M25L8I9N3M15OL9FEFQW7T8OIS7'
 videos = [      'bike', '50salad',  'cmu_salad','pbj',  'tum']#,'julia']
 start_times = [ 0.0,    180.0,      120.0,      2.0,    15.0]
 videos = [      'bike','bike','bike', '50salad', '50salad','50salad', 'cmu_salad', 'cmu_salad', 'cmu_salad','pbj','pbj','pbj','tum','tum','tum']#,'julia']
 start_times = [ 0.0,10.0,20.0,           180.0,190.0,200.0,               120.0,130.0,140.0,                   2.0,12.0,22.0,    15.0,25.0,35.0]
-target_video = '50salad'
-target_start_time = 180.0+10
+target_video = 'bike'
+target_start_time = 0.0+10
 inputs = sys.argv
+time_diff_sum = 0
+time_diff_count = 0
 output_name= inputs[1] #skip first input argument (script name)
 wordcounts = {} #counts frequency of words within all annotations
 segcounts  = {} #counts # segments per video
 vidcounts  = {} #counts # times video was annotated
 vid_time_diff = {} #sum of difference between start and end times by video
 vid_time_count = {} #count of start time differences
+annotation_tracker = [] #tracks annotations by video
 delta_counter = 0.1
 delta_y_counter = 0.01
 counter = delta_counter
-submit_count = 0
-loopcount = 0
-annotation_count = 0
-bonus_count = 0
+y_counter = delta_y_counter
+
+def init_file(name,mode):
+    open(name, mode).close()
+    f = open(name, mode)
+    return f
+
+def init_csv(name,mode):
+    open(name+'.csv', mode).close()
+    csvfile = open(name+'.csv', mode)
+    if(mode == 'wb'):
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerow(headers)
+        return csvwriter
+    elif(mode == 'rb'):
+        csvreader = csv.reader(csvfile, delimiter=',')
+        return csvreader
+
+#strip first in delim-separated string of elements
+def strip_first(to_strip,delim):
+    first_delim = to_strip.find(delim)
+    if(first_delim != -1):
+        to_strip = to_strip[first_delim+1:]
+    else:
+        to_strip = ''
+    return to_strip
+
+def mkdir(dir_name):
+    try:
+        os.mkdir(dir_name)
+    except OSError:
+        print 'dir ' + dir_name + ' already exists'
 
 def increment_wordcounts(annotationArr):
     for annotation in annotationArr:
         words = annotation.split()
         for word in words:
-            if( word != 'the' and word != 'to' and word != 'He' and word != 'She' and word != 'of' and word != 'his'):
-                if(wordcounts.has_key(word)):
-                    wordcounts[word] = wordcounts[word] + 1
-                else:
-                    wordcounts[word] = 1
+            if(wordcounts.has_key(word)):
+                wordcounts[word] = wordcounts[word] + 1
+            else:
+                wordcounts[word] = 1
+
+def increment_dict(diction, key, num_increment):
+    if(diction.has_key(key)):
+        diction[key] = diction[key] + num_increment
+    else:
+        diction[key] = num_increment
+
+"""
+def append_to_dict(diction, key, value):
+    if(diction.has_key(key)):
+        diction[key] = diction[key].append(value)
+    else:
+        diction[key] = [value]
+"""
+
+def plot_dict(diction):
+    min_frequency = 0.05 * max(diction.values())
+    diction = dict((key, frequency) for key, frequency in diction.items() if frequency >= min_frequency)
+    alphab = diction.keys()
+    frequencies = diction.values()
+    #d = dict((k, v) for k, v in d.items() if v >= 10)
+    pos = arange(len(frequencies))
+    width = 1.0     # gives histogram aspect to the bar diagram
+
+    ax = plt.axes()
+    ax.set_xticks(pos)# + (width / 2))
+    ax.set_xticklabels(alphab, rotation=45, fontsize=8)
+    ax.set_ylabel('frequencies')
+
+    plt.bar(pos, frequencies, width, color='r')
+    plt.show()
+
+def dict_ratio(d1, d2):
+    value_ratio = divide(array(d1.values()), array(d2.values()))
+    d3 = {k:v for k,v in zip(d1.keys(),value_ratio)}
+    return d3
+
+def url2name(url):
+    return url[url.rfind('/')+1:url.rfind('.')]
 
 output_dir_name = ''+output_name+'/'
 if(os.path.isfile('/Users/troniak/Downloads/'+output_name+'.csv')):
     shutil.move('/Users/troniak/Downloads/'+output_name+'.csv', '../output/'+output_name+'.csv')
 
-for a in [1]:#target_video,target_start_time in zip(videos,start_times):
-#for target_video,target_start_time in zip(videos,start_times):
-    loopcount += 1
+for target_video,target_start_time in zip(videos,start_times):
     csvreader = init_csv('../output/'+output_name,'rb')
 #sortedlist = sorted(csvreader, key=operator.itemgetter(3), reverse=True)
-    if(os.path.isdir(output_dir_name)):
+    if(os.path.isfile(output_dir_name)):
         shutil.rmtree(output_dir_name)
     mkdir(output_dir_name)
     rows = iter(csvreader)
     output_headers = next(rows)
-    #print output_headers
     for row in rows:
         hitId           = row[output_headers.index('HITId')]
         workerId        = row[output_headers.index('WorkerId')]
@@ -79,10 +146,7 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
 
         #quals = mturk.get_qualification_score(action_annotation_type_id, workerId)
         #if any(workerId in s for s in qualified_workers): #show results from qualified workers only
-        if(1):#len(quals) > 0 and quals[0].IntegerValue >= 50): #show results from qualified workers only
-        #if(workerId == 'A3SKQPPOKCZU88'): #certain workers results
-        #if(hitId == '2DJVP9746OQ5IIE0TTX7B51QLTB1LW'): #certain workers results
-                submit_count += 1
+        if(len(quals) > 0 and quals[0].IntegerValue >= 50): #show results from qualified workers only
                 video_start_pattern = '${start_time}'
                 video_end_pattern   = '${end_time}'
                 webm_pattern        = '${video_url_webm}'
@@ -93,13 +157,7 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                 vidsrc_pattern      = '${vid_src}'
                 title_pattern       = '${video_title}'
 
-                #print annotation_count
-                #print startTimesStr
                 increment_wordcounts (videoTitlesStr.split('|'));
-                annotation_count += len(startTimesStr.split('|')) - 5
-                bonus = max(0,len(startTimesStr.split('|'))-5) / 5.0 * 0.5;
-                bonus = floor(bonus*2)/2.0
-                bonus_count += bonus
                 increment_dict(segcounts, url2name(webmFilename), len(startTimesStr.split('|')));
                 increment_dict(vidcounts, url2name(webmFilename), 1);
                 startTimesArr = startTimesStr.split('|')
@@ -126,7 +184,6 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                         increment_dict(vid_time_count, url2name(webmFilename), 1);
 
                     if(status == 'Submitted'): #only analyze results that have not yet been approved
-                    #if(1):
                         #print 'writing file '+output_dir_name+'analysis_'+hitId+'.html'
                         writer = init_file(output_dir_name+'analysis_'+workerId+'_'+hitId+'.html','wb')
                         reader = init_file(template_name,'rb')
@@ -153,17 +210,14 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                                 writer.write(line)
 
 #print wordcounts
-    #plt.show()
-    plt.savefig('../output/figures/' + '_' + str(loopcount) + '_' + str(target_video) + '_' + str(target_start_time) + '.png')    #save("signal", ext="png", close=False, verbose=True)
-    plt.close()
-    print 'submit_count: ' + str(submit_count)
-    print 'annotation_count: ' + str(annotation_count)
-    print 'bonus_count: ' + str(bonus_count)
-    #print 'number of videos annotated (/30): ' + str(vidcounts)
-    #plot_dict(wordcounts)
-    #plot_dict(segcounts)
-    #plot_dict(dict_ratio(segcounts, vidcounts))
-    #print 'average time per annotation: ' + str(dict_ratio(vid_time_diff,vid_time_count))
+    plt.show()
+    #savefig('foo.png')
+    print 'number of videos annotated (/30): ' + str(vidcounts)
+    print 'number of qualified workers: ' + str(len(qualified_workers))
+    plot_dict(wordcounts)
+    plot_dict(segcounts)
+    plot_dict(dict_ratio(segcounts, vidcounts))
+    print 'average time per annotation: ' + str(dict_ratio(vid_time_diff,vid_time_count))
 #print vid_time_diff
 #print vid_time_count
 #plot_dict(vidcounts)

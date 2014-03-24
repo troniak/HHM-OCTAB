@@ -14,75 +14,68 @@ import itertools
 from mturk import *
 from pylab import *
 
+
 mturk = new_mturk_connection()
 
-url = 'http://cs.ubc.ca/~troniak/'
-template_name = 'template.html'
-videos = [      'bike', '50salad',  'cmu_salad','pbj',  'tum']#,'julia']
-start_times = [ 0.0,    180.0,      120.0,      2.0,    15.0]
-videos = [      'bike','bike','bike', '50salad', '50salad','50salad', 'cmu_salad', 'cmu_salad', 'cmu_salad','pbj','pbj','pbj','tum','tum','tum']#,'julia']
-start_times = [ 0.0,10.0,20.0,           180.0,190.0,200.0,               120.0,130.0,140.0,                   2.0,12.0,22.0,    15.0,25.0,35.0]
-target_video = '50salad'
-target_start_time = 180.0+10
+
 inputs = sys.argv
-output_name= inputs[1] #skip first input argument (script name)
-wordcounts = {} #counts frequency of words within all annotations
-segcounts  = {} #counts # segments per video
+payments_filename   = inputs[1] #skip first input argument (script name)
+assignments_filename= inputs[2] #skip first input argument (script name)
 vidcounts  = {} #counts # times video was annotated
-vid_time_diff = {} #sum of difference between start and end times by video
-vid_time_count = {} #count of start time differences
-delta_counter = 0.1
-delta_y_counter = 0.01
-counter = delta_counter
-submit_count = 0
-loopcount = 0
-annotation_count = 0
+HITIds= [] #counts # times video was annotated
 bonus_count = 0
 
-def increment_wordcounts(annotationArr):
-    for annotation in annotationArr:
-        words = annotation.split()
-        for word in words:
-            if( word != 'the' and word != 'to' and word != 'He' and word != 'She' and word != 'of' and word != 'his'):
-                if(wordcounts.has_key(word)):
-                    wordcounts[word] = wordcounts[word] + 1
-                else:
-                    wordcounts[word] = 1
 
-output_dir_name = ''+output_name+'/'
-if(os.path.isfile('/Users/troniak/Downloads/'+output_name+'.csv')):
-    shutil.move('/Users/troniak/Downloads/'+output_name+'.csv', '../output/'+output_name+'.csv')
+if(os.path.isfile('/Users/troniak/Downloads/'+assignments_filename+'.csv')):
+    shutil.move('/Users/troniak/Downloads/'+assignments_filename+'.csv', '../output/'+assignments_filename+'.csv')
+if(os.path.isfile('/Users/troniak/Downloads/'+payments_filename+'.csv')):
+    shutil.move('/Users/troniak/Downloads/'+payments_filename+'.csv', '../output/'+payments_filename+'.csv')
 
-for a in [1]:#target_video,target_start_time in zip(videos,start_times):
-#for target_video,target_start_time in zip(videos,start_times):
-    loopcount += 1
-    csvreader = init_csv('../output/'+output_name,'rb')
-#sortedlist = sorted(csvreader, key=operator.itemgetter(3), reverse=True)
-    if(os.path.isdir(output_dir_name)):
-        shutil.rmtree(output_dir_name)
-    mkdir(output_dir_name)
-    rows = iter(csvreader)
-    output_headers = next(rows)
-    #print output_headers
-    for row in rows:
-        hitId           = row[output_headers.index('HITId')]
-        workerId        = row[output_headers.index('WorkerId')]
-        status          = row[output_headers.index('AssignmentStatus')]
-        mp4Filename     = row[output_headers.index('Input.video_url_mp4')]
-        webmFilename    = row[output_headers.index('Input.video_url_webm')]
-        videoStartTimeStr  = row[output_headers.index('Input.start_time')]
-        videoEndTime    = row[output_headers.index('Input.end_time')]
-        #noMoreActions   = row[output_headers.index('Answer.noMoreActions')]
-        videoTitlesStr  = strip_first(row[output_headers.index('Answer.annotationText')],'|')
-        startTimesStr   = strip_first(row[output_headers.index('Answer.startTimeList')],'|')
-        endTimesStr     = strip_first(row[output_headers.index('Answer.endTimeList')],'|')
 
+assignmentsreader   = init_csv('../output/'+assignments_filename,'rb')
+rows = iter(assignmentsreader)
+output_headers = next(rows)
+for row in rows:
+    #print row[output_headers.index('HITId')]
+    HITIds += [row[output_headers.index('HITId')]]
+#print HITIds
+#print len(HITIds)
+
+
+paymentsreader      = init_csv('../output/'+payments_filename,'rb')
+rows = iter(paymentsreader)
+output_headers = next(rows)
+for row in rows:
+    transID         = row[output_headers.index('Transaction ID')]
+    initDate        = row[output_headers.index('Date Initiated')]
+    postDate        = row[output_headers.index('Date Posted')]
+    transType       = row[output_headers.index('Transaction Type')]
+    payMethod       = row[output_headers.index('Payment Method')]
+    recipID         = row[output_headers.index('Recipient ID')]
+    amount          = row[output_headers.index('Amount')]
+    hitID           = row[output_headers.index('HIT ID')]
+    assignID        = row[output_headers.index('Assignment ID')]
+    #print assignID
+    #print any(assignID in s for s in HITIds)
+    #if(transType == 'BonusPayment'):
+        #print 'hid: ' + hitID
+        #print 'isi: ' + str(hitID in HITIds)
+        #print 'rid: ' + recipID
+        #print 'amt: ' + amount
+        #print '~~~~~'
+    if(recipID == 'A3SKQPPOKCZU88' and transType == 'BonusPayment'):# and hitID in HITIds):
+        print "" + hitID + " | " + postDate + " | " + amount
+        bonus_count += float(amount)
+print 'bonus_count: %0.2f ' % bonus_count
+
+
+"""
         #quals = mturk.get_qualification_score(action_annotation_type_id, workerId)
         #if any(workerId in s for s in qualified_workers): #show results from qualified workers only
-        if(1):#len(quals) > 0 and quals[0].IntegerValue >= 50): #show results from qualified workers only
-        #if(workerId == 'A3SKQPPOKCZU88'): #certain workers results
-        #if(hitId == '2DJVP9746OQ5IIE0TTX7B51QLTB1LW'): #certain workers results
+        #if(1):#len(quals) > 0 and quals[0].IntegerValue >= 50): #show results from qualified workers only
+        if(workerId == 'A3SKQPPOKCZU88'): #certain workers results
                 submit_count += 1
+        #if(hitId == '2DJVP9746OQ5IIE0TTX7B51QLTB1LW'): #certain workers results
                 video_start_pattern = '${start_time}'
                 video_end_pattern   = '${end_time}'
                 webm_pattern        = '${video_url_webm}'
@@ -93,8 +86,8 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                 vidsrc_pattern      = '${vid_src}'
                 title_pattern       = '${video_title}'
 
-                #print annotation_count
-                #print startTimesStr
+                print annotation_count
+                print startTimesStr
                 increment_wordcounts (videoTitlesStr.split('|'));
                 annotation_count += len(startTimesStr.split('|')) - 5
                 bonus = max(0,len(startTimesStr.split('|'))-5) / 5.0 * 0.5;
@@ -125,8 +118,8 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                         increment_dict(vid_time_diff, url2name(webmFilename), abs(t1-t2));
                         increment_dict(vid_time_count, url2name(webmFilename), 1);
 
-                    if(status == 'Submitted'): #only analyze results that have not yet been approved
-                    #if(1):
+                    #if(status == 'Submitted'): #only analyze results that have not yet been approved
+                    if(1):
                         #print 'writing file '+output_dir_name+'analysis_'+hitId+'.html'
                         writer = init_file(output_dir_name+'analysis_'+workerId+'_'+hitId+'.html','wb')
                         reader = init_file(template_name,'rb')
@@ -180,3 +173,4 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
         #    absStartTime = float(baseTime)+float(startTime)
         #    absEndTime = float(baseTime)+float(endTime)
         #    csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
+"""
