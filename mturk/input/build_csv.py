@@ -55,8 +55,8 @@ if(len(input_filenames) > 1):
                         csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
 else:
     videos = ['50salad']#,'bike','50salad','cmu_salad','pbj','tum']#,'julia']
-    start_times = [0.0,0.0,180.0,120.0,2.0,15.0]
-    vid_resolutions = [2.0, 5.0, 10.0, 20.0, 30.0]
+    start_times = [180.0]#0.0,0.0,180.0,120.0,2.0,15.0]
+    vid_resolutions = [10.0,30.0]#2.0, 5.0, 10.0, 20.0, 30.0]
     overlap_diviser = 1
     max_resolution = vid_resolutions[-1]
 

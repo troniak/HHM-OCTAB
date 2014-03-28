@@ -1948,8 +1948,8 @@ video::-webkit-media-controls {
         
         video.addEventListener("dblclick", videoFullscreen);
 
-        video_start_time = 25.0;
-        video_end_time = 35.0;
+        video_start_time = 1;
+        video_end_time = 11;
         video_title = '';
         
         //uncomment this when deploying to mturk!!
@@ -1995,9 +1995,6 @@ video::-webkit-media-controls {
             label_title.style.display = "";
         }
     } 
-
-   
- 
 
     function videoFullscreen(){
         if (video.requestFullscreen) {
@@ -2061,7 +2058,6 @@ video::-webkit-media-controls {
                 break;            
         }
     }
-
   
     function playOrPause() {
         if( toggleIsPlay == false ) {
@@ -2073,7 +2069,7 @@ video::-webkit-media-controls {
             pause();
         }
     }
-/*    function reverseOrPause() {
+    /*function reverseOrPause() {
         if( toggleIsPlay == false ) {
             video.playbackRate = -1 * Math.abs(video.playbackRate);
             play();
@@ -2428,22 +2424,8 @@ video::-webkit-media-controls {
                 newAnnotation(divName, annotID, startTimesArr[i], endTimesArr[i], tagsArr[i])
             }
             else{
-                //newAnnotationSlider(annotID, startTimesArr[i], endTimesArr[i], tagsArr[i])
+                newAnnotationSlider(annotID, startTimesArr[i], endTimesArr[i], tagsArr[i])
             }
-
-            /*
-            var newdiv = document.createElement("div");
-			newdiv.setAttribute("id", annotID);
-
-            // changing the order of the inputs below will affect "editAnnotation(divName, annotID)" function
-            newdiv.innerHTML = '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimesArr[i] + '">';
-            newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimesArr[i] + '">';
-            newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + tagsArr[i] + '">';
-            newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button">';
-            //newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button">';            
-            //newdiv.innerHTML = newdiv.innerHTML + '<input value="X" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button">';
-            document.getElementById(divName).appendChild(newdiv);
-            */
         }
         document.getElementById("annotationListOuterArea").scrollTop = document.getElementById("annotationListOuterArea").scrollHeight + 100;
         document.getElementById("annotationListOuterArea").scroll = document.getElementById("annotationListOuterArea").scrollTop;			
@@ -2625,7 +2607,6 @@ video::-webkit-media-controls {
                     onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
                 <source src="${video_url_mp4}" type="video/mp4" />
                 <source src="${video_url_webm}" type="video/webm" />
-                <source src="http://www.cs.cmu.edu/~dtroniak/tum.webm" type="video/webm" />
                 <source src="http://www.cs.cmu.edu/~dtroniak/test.webm" type="video/webm" />
             </video>
             <div id="video-controls">
@@ -2636,14 +2617,12 @@ video::-webkit-media-controls {
         <div id="annotationSliderOuterArea">
             <div id="annotationSliderArea">
             </div>
-            <!--
             </br>
             </br>
             </br>
             </br>
             </br>
             </br>
-            -->
         </div>
         
     </div>

@@ -31,16 +31,17 @@ for filename in filenames:
     csvreader = init_csv(filename,'r')
     rows = iter(csvreader)
     next(rows)
-    gt_start_times_str = ''
-    gt_end_times_str = ''
-    gt_tags_str = ''
+    gt_start_times = []
+    gt_end_times = []
+    gt_tags = []
     for row in rows:
-        gt_start_times_str += row[0]+'|'
-        gt_end_times_str += row[1]+'|'
-        gt_tags_str += row[2]+'|'
-    gt_start_times = gt_start_times_str[0:-1]
-    gt_end_times = gt_end_times_str[0:-1]
-    gt_tags = gt_tags_str[0:-1]
+        gt_start_times += [row[0]]
+        gt_end_times += [row[1]]
+        gt_tags += [row[2]]
+    gt_start_times_str = "|".join(gt_start_times)
+    gt_end_times_str = "|".join(gt_end_times)
+    gt_tags_str = "|".join(gt_tags)
+    #print gt_tags
     #print len(gt_end_times.split('|'))
     #print gt_start_times
     #print gt_end_times
@@ -58,14 +59,22 @@ for resolution in vid_resolutions:
     for video,start_time in zip(videos,start_times):
         vidmp4 = url + video + '.mp4'
         vidwebm = url + video + '.webm'
-        for i,j in zip( arange(start_time,start_time+max_resolution+resolution,resolution), \
-                        arange(start_time+resolution/overlap_diviser,start_time+max_resolution+resolution,resolution)):
+        for i in arange(start_time,start_time+max_resolution+resolution,resolution):
+            segment_gt_start_times = []
+            segment_gt_end_times = []
+            segment_gt_tags = []
+            for gt_tag,gt_start_time,gt_end_time in zip(gt_tags,gt_start_times,gt_end_times):
+                if(float(gt_start_time) >= i and float(gt_start_time) <= i+resolution):
+                    segment_gt_start_times += [str(float(gt_start_time)-i)]
+                    segment_gt_end_times += [str(float(gt_end_time)-i)]
+                    segment_gt_tags += [gt_tag]
+                    #print str(float(gt_start_time)-i) + "->" + str(float(gt_end_time)-i)
+            segment_gt_start_times_str = "|".join(segment_gt_start_times)
+            segment_gt_end_times_str = "|".join(segment_gt_end_times)
+            segment_gt_tags_str = "|".join(segment_gt_tags)
             if(i+resolution <= start_time+max_resolution):
-                csvwriter_all.writerow([vidmp4, vidwebm, '', i, i+resolution,gt_start_times,gt_end_times,gt_tags])
-                csvwriter_eachres.writerow([vidmp4, vidwebm, '', i, i+resolution,gt_start_times,gt_end_times,gt_tags])
-            if(overlap_diviser != 1 and j+resolution <= start_time+max_resolution):
-                csvwriter_all.writerow([vidmp4, vidwebm, '', j, j+resolution,gt_start_times,gt_end_times,gt_tags])
-                csvwriter_eachres.writerow([vidmp4, vidwebm, '', j, j+resolution,gt_start_times,gt_end_times,gt_tags]) #empty title
+                csvwriter_all.writerow([vidmp4, vidwebm, '', i, i+resolution,segment_gt_start_times_str,segment_gt_end_times_str,segment_gt_tags_str])
+                csvwriter_eachres.writerow([vidmp4, vidwebm, '', i, i+resolution,segment_gt_start_times_str,segment_gt_end_times_str,segment_gt_tags_str])
 
 
 #csvfile = open('input/from_output.csv', 'rb')

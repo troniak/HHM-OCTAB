@@ -1948,8 +1948,8 @@ video::-webkit-media-controls {
         
         video.addEventListener("dblclick", videoFullscreen);
 
-        video_start_time = 25.0;
-        video_end_time = 35.0;
+        video_start_time = 1;
+        video_end_time = 11;
         video_title = '';
         
         //uncomment this when deploying to mturk!!
@@ -1974,6 +1974,7 @@ video::-webkit-media-controls {
             analyzeStartTimesArr = analyzeStartTimesStr.split('|');
             analyzeEndTimesArr = analyzeEndTimesStr.split('|');
             analyzeTagsArr = analyzeTagsStr.split('|');
+            alert(analyzeStartTimesStr);
             
             // Sanity check
             if( analyzeStartTimesArr.length != analyzeEndTimesArr.length ) {
@@ -1995,9 +1996,6 @@ video::-webkit-media-controls {
             label_title.style.display = "";
         }
     } 
-
-   
- 
 
     function videoFullscreen(){
         if (video.requestFullscreen) {
@@ -2054,14 +2052,15 @@ video::-webkit-media-controls {
                 setStartTimeText();
                 break;            
             case 13: // "enter" key input
-                submitForm();
+                if(event.shiftKey == true){
+                    submitForm();
+                }
                 break;            
             case 27: // "esc" key input
                 videoFullscreen();
                 break;            
         }
     }
-
   
     function playOrPause() {
         if( toggleIsPlay == false ) {
@@ -2073,7 +2072,7 @@ video::-webkit-media-controls {
             pause();
         }
     }
-/*    function reverseOrPause() {
+    /*function reverseOrPause() {
         if( toggleIsPlay == false ) {
             video.playbackRate = -1 * Math.abs(video.playbackRate);
             play();
@@ -2611,7 +2610,6 @@ video::-webkit-media-controls {
                     onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
                 <source src="${video_url_mp4}" type="video/mp4" />
                 <source src="${video_url_webm}" type="video/webm" />
-                <source src="http://www.cs.cmu.edu/~dtroniak/tum.webm" type="video/webm" />
                 <source src="http://www.cs.cmu.edu/~dtroniak/test.webm" type="video/webm" />
             </video>
             <div id="video-controls">
@@ -2720,7 +2718,7 @@ video::-webkit-media-controls {
         Set Start Time ==> s<br/>
         Set End Time ==> e<br/>
         Annotate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> a<br/>
-        Submit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;enter<br/>
+        Submit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;shift-enter<br/>
         <!--Fullscreen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;esc <br/>-->
     </div>
 

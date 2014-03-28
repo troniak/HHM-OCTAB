@@ -2,32 +2,16 @@ from numpy import *
 from matplotlib import pyplot as plt
 
 def calc_annotation_agreement(As, Ae, Bs, Be,epsilon,fps,max_time,vid_start_time):
-  #print As
-  #print Ae
-  #print Bs
-  #print Be
   agreement_matrix = zeros(shape=(max_time*fps,max_time*fps))
   agreed = 0
-  #print vid_start_time
   for sA,eA in zip(As,Ae):
     for sB,eB in zip(Bs,Be):
       sdiff = round(sA*fps) - round(sB*fps)
       ediff = round(eA*fps) - round(eB*fps)
       if(abs(sdiff) <= epsilon and abs(ediff) <= epsilon):
-      #if((round(sA*fps) == round(sB*fps)) and round(eA*fps) == round(eB*fps)):
-        #print abs(round(sA*fps) - round(sB*fps))
-        #print abs(round(eA*fps) - round(eB*fps))
-        #print 'agreed!'
-        #print int(round((vid_start_time+sA)*fps))
-        #print int(round((vid_start_time+sB)*fps))
-        #print int(round((vid_start_time+eA)*fps))
-        #print int(round((vid_start_time+eB)*fps))
         adiff = max(abs(sdiff),abs(ediff))+1
         agreed = 1
         agreement_matrix[int(round((vid_start_time+sA)*fps)+sdiff),int(round((vid_start_time+eA)*fps)+ediff)] += (1.0/adiff)
-        #plt.imshow(agreement_matrix)
-        #plt.show()
-  #print agreement_matrix
   if(agreed):
     return agreement_matrix
   else:
