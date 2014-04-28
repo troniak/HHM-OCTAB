@@ -7,12 +7,12 @@ import shutil
 from matplotlib import pyplot as plt
 
 #strip first in delim-separated string of elements
-def strip_first(to_strip,delim):
+def strip_first(to_strip,delim,null_char=''):
     first_delim = to_strip.find(delim)
     if(first_delim != -1):
         to_strip = to_strip[first_delim+1:]
     else:
-        to_strip = ''
+        to_strip = null_char
     return to_strip
 
 def increment_dict(diction, key, num_increment):
