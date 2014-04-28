@@ -1,4 +1,5 @@
 import boto.mturk.connection as conn
+from boto.mturk.price import Price
 from collections import OrderedDict
 from operator import itemgetter
 import fileinput
@@ -9,7 +10,9 @@ import sys
 from numpy import arange
 import numpy as np
 from matplotlib import pyplot as plt
-import re
+from mturk import *
+import datetime
+import time
 
 headers = ['HITId', 'WorkerID','Input.title','Input.start_time','Input.end_time','Answer.endTimeList','Answer.noMoreActions','Answer.startTimeList']
 HIT_headers = ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords', 'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime', 'SubmitTime', 'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 'Last7DaysApprovalRate', 'Input.video_url_mp4', 'Input.video_url_webm', 'Input.title', 'Input.start_time', 'Input.end_time', 'Answer.annotationText', 'Answer.endTimeList', 'Answer.noMoreActions', 'Answer.startTimeList', 'Approve', 'Reject']
@@ -71,7 +74,54 @@ def plot_dict(diction):
     plt.bar(pos, frequencies, width, color='r')
     plt.show()
 
-mturk = conn.MTurkConnection(aws_access_key_id='AKIAJUL53VTH3ENYMNIQ', aws_secret_access_key='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', is_secure=True, port=None, proxy=None, proxy_port=None, proxy_user=None, proxy_pass=None, host=None, debug=0, https_connection_factory=None, security_token=None, profile_name=None)
+#e.g. mturk time string: 2014-04-19T19:36:32Z
+def parse_mturk_time(time_str,return_time_part=''):
+  ymd = time_str.split('-')
+  dt  = ymd[2].split('T')
+  hms = dt[1].replace('Z','').split(':')
+  #print 'ymd:'+str(ymd)
+  #print 'dt:'+str(dt)
+  #print 'hms:'+str(hms)
+  if(return_time_part=='y'):
+    return ymd[0]
+  elif(return_time_part=='mo'):
+    return ymd[1]
+  elif(return_time_part=='d'):
+    return dt[0]
+  elif(return_time_part=='t'):
+    return dt[1]
+  elif(return_time_part=='h'):
+    return hms[0]
+  elif(return_time_part=='mi'):
+    return hms[1]
+  elif(return_time_part=='s'):
+    return hms[2]
+  else:
+    return ''
+
+#convert to python time (for comparison, etc.)
+def mtime2ptime(mturk_time_str):
+  return datetime.datetime(int(parse_mturk_time(mturk_time_str,'y')), int(parse_mturk_time(mturk_time_str,'mo')), int(parse_mturk_time(mturk_time_str,'d')), int(parse_mturk_time(mturk_time_str,'h')), int(parse_mturk_time(mturk_time_str,'mi')))
+
+def pay_bonuses(bonuses,i):
+  worker_id = bonuses.keys()[i]
+  print 'worker %s: approve all assignments and pay %f bonus?' % (bonuses.keys()[i],bonus_totals[i])
+  answer = raw_input('yes/no: ')
+  if(answer == 'yes'):
+    for bonus in bonuses.values()[i]:
+      assignment_id = bonus[0]
+      amount = bonus[1]
+      if(amount > 0):
+        annotation_count = bonus[2]
+        reason = 'Extra ' + str(annotation_count) + ' annotations. Thank you very much!'
+        pay_bonus(worker_id, assignment_id, amount, reason)
+        #print reason
+      mturk.approve_assignment(assignment_id)
+    print 'bonus paid!'
+  else:
+    print 'bonus not paid'
+
+mturk = new_mturk_connection()
 bonuses = {}
 submit_counts = {}
 annotation_counts = {}
@@ -88,7 +138,10 @@ csvwriter_all = init_csv(''+'results','w')
 #output_headers = []
 answers = {}
 hitcount = 0
-innerhitcount = 0
+assignmentcount = 0
+#mturk_base_time = '2014-04-01T00:00:00Z'
+mturk_base_time = datetime.datetime.now() - datetime.timedelta(days=14) #2 weeks ago
+old_hits = []
 for hit in hits:
     if(1):
         hitcount += 1
@@ -96,64 +149,137 @@ for hit in hits:
         #output_headers += [hit.WorkerID]
         headers = ['HITId', 'WorkerID','Input.title','Input.start_time','Input.end_time','Answer.endTimeList','Answer.noMoreActions','Answer.startTimeList']
         assignments = mturk.get_assignments(hit.HITId)
+        old_hit = True
         for assignment in assignments:
             #if(1):
             #if(assignment.AssignmentStatus == 'Submitted'):
-            #if(assignment.WorkerId == 'A2QAJ8BJ5QBB9A'):
-            if(assignment.WorkerId in worker_milestones.keys()):
-                innerhitcount += 1
-                #print "HIT# %d" % hitcount
-                #print "Inner-loop HIT#: %d" % innerhitcount
-                #print "Answers of the worker %s" % assignment.WorkerId
-                a = 0
-                for question_form_answer in assignment.answers[0]:
-                    answers[hitcount] = question_form_answer
-                    for value in question_form_answer.fields:
-                      a += 1
-                      #print 'field' + str(a) + ': ' + value
-                #print 'work time (s): ' + assignment.WorkTimeInSeconds
-                annotations_struct  = assignment.answers[0][2]
-                annotations_str = annotations_struct.fields[0]
-                annotations = strip_first(annotations_str,'|').split('|')
-                numannotations = len(annotations)
-                numwords = len(annotations_str.replace('|',' ').split(' '))
-                #print 'annotations_str: ' + annotations_str
-                #print 'numwords: %d' % numwords
-                #print 'numannotations: %d' % numannotations
-                bonus = max(0,numannotations-5) / 5.0 * 0.5;
-                bonus = floor(bonus*2)/2.0
-                #print 'bonus: ' + str(bonus)
-                increment_dict(bonuses, assignment.WorkerId, bonus)
-                increment_dict(submit_counts, assignment.WorkerId, 1)
-                increment_dict(annotation_counts, assignment.WorkerId, numannotations)
-                increment_dict(word_counts, assignment.WorkerId, numwords)
-
-                #print words_per_annot
-
-                if(submit_counts.get(assignment.WorkerId) in worker_milestones.get(assignment.WorkerId)):
-                  words_per_annot = [len(re.findall(r'\w+', annot)) for annot in annotations]
-                  increment_dict(milestone_counts,assignment.WorkerId,1)
-                  print 'milestone ' + str(milestone_counts.get(assignment.WorkerId)) + ' for ' + assignment.WorkerId + ':'
-                  word_mean = np.mean(words_per_annot)
-                  word_std = np.std(words_per_annot)
-                  #try:
-                  #  word_mean = numwords / numannotations
-                  #except ZeroDivisionError:
-                  #  word_mean = 0
-                  #print annotations_str
-                  print 'number of submissions: %d' % submit_counts.get(assignment.WorkerId)
-                  print 'number of annotations: %d' % numannotations
-                  print 'mean wordcount per annotation: %f' % word_mean
-                  print 'std wordcount per annotation: %f' % word_std
-                  increment_dict(annotation_counts_milestone, assignment.WorkerId, [numannotations])
-                  increment_dict(word_means_milestone, assignment.WorkerId, [word_mean])
-                  increment_dict(word_stds_milestone, assignment.WorkerId, [word_std])
+            if(assignment.WorkerId == 'A1BLX7N12KAS0U'):
+            #if(assignment.WorkerId in worker_milestones.keys()):
+                assignmentcount += 1
+                print "HIT#: %d"        % hitcount
+                print "Assignment#: %d" % assignmentcount
+                print "AssignmentId: %s"% assignment.AssignmentId
+                print "HITId: %s"       % hit.HITId
+                print "WorkerId: %s"    % assignment.WorkerId
+                print "Accept Time: %s" % assignment.AcceptTime
+                print "Submit Time: %s" % assignment.SubmitTime
+                approval_time = ''
+                rejection_time = ''
+                try:
+                  approval_time = str(assignment.ApprovalTime)
+                  print "Approval Time: " + approval_time
+                except AttributeError:
+                  try:
+                    rejection_time = str(assignment.RejectionTime)
+                    print "Rejection Time: " + rejection_time
+                  except AttributeError:
+                    print "Approval/Rejection Time: N/A"
+                try:
+                  #if younger than base time
+                  #if(mtime2ptime(mturk_base_time) < mtime2ptime(approval_time)):
+                  #  old_hit = False
+                  if(1):
+                    a = 0
+                    for question_form_answer in assignment.answers[0]:
+                        answers[hitcount] = question_form_answer
+                        for value in question_form_answer.fields:
+                          #a += 1
+                          print 'field' + str(a) + ': ' + value
+                    #print 'work time (s): ' + assignment.WorkTimeInSeconds
+                    annotations_struct  = assignment.answers[0][2]
+                    annotations_str = annotations_struct.fields[0]
+                    annotations = strip_first(annotations_str,'|').split('|')
+                    numannotations = len(annotations)
+                    #print annotations
+                    #print numannotations
+                    numwords = len(annotations_str.replace('|',' ').split(' '))
+                    #print 'annotations_str: ' + annotations_str
+                    #print 'numwords: %d' % numwords
+                    #print 'numannotations: %d' % numannotations
+                    bonus = max(0,numannotations-5) / 5.0 * 0.5;
+                    bonus = floor(bonus*2)/2.0
+                    print 'bonus: ' + str(bonus)
+                    increment_dict(bonuses, assignment.WorkerId, bonus)
+                    increment_dict(submit_counts, assignment.WorkerId, 1)
+                    increment_dict(annotation_counts, assignment.WorkerId, numannotations)
+                    increment_dict(word_counts, assignment.WorkerId, numwords)
+                  else:
+                    print 'Too old!'
                   print "--------------------"
+                except AttributeError:
+                  a = 0
+                #print words_per_annot
+                #print "--------------------"
                 #print hit
                 #csvwriter.writerow([vidmp4, vidwebm, '', i, i+resolution])
-print bonuses
-print submit_counts
-print annotation_counts
+                #if(old_hit): #all assignments older than base time
+                #  old_hits += [hit]
+                #else:
+                #  new_hits += [hit]
+
+print "what would you like to do?"
+print "1. output all hits"
+raw_input('')
+
+#print bonuses
+#print submit_counts
+#print annotation_counts
+"""
+bonus_totals = np.zeros(len(bonuses))
+
+for i in arange(len(bonuses)):
+  print "%d - %s:" % (i, bonuses.keys()[i])
+  for bonus in bonuses.values()[i]:
+    print "%s, %f" % (bonus[0],bonus[1]) ,
+    bonus_totals[i] += bonus[1]
+  print ''
+  print 'total: ' + str(bonus_totals[i])
+
+index = int(raw_input('select worker to pay bonus (-1 for all)'))
+
+if(index == -1):
+  for i in arange(len(bonuses)):
+    pay_bonuses(bonuses, i)
+else:
+  pay_bonuses(bonuses,index)
+"""
+"""
+print 'worker %s: approve all assignments and pay %f bonus?' % (bonuses.keys()[index],bonus_totals[index])
+answer = raw_input('yes/no: ')
+if(answer == 'yes'):
+  for bonus in bonuses.values()[index]:
+    assignment_id = bonus[0]
+    amount = bonus[1]
+    if(amount > 0):
+      annotation_count = bonus[2]
+      reason = 'Extra ' + str(annotation_count) + ' annotations. Thank you very much!'
+      #print reason
+      pay_bonus(worker_id, assignment_id, amount, reason)
+      print 'bonus paid!'
+else:
+  print 'bonus not paid'
+"""
+"""
+if(submit_counts.get(assignment.WorkerId) in worker_milestones.get(assignment.WorkerId)):
+words_per_annot = [len(re.findall(r'\w+', annot)) for annot in annotations]
+increment_dict(milestone_counts,assignment.WorkerId,1)
+print 'milestone ' + str(milestone_counts.get(assignment.WorkerId)) + ' for ' + assignment.WorkerId + ':'
+word_mean = np.mean(words_per_annot)
+word_std = np.std(words_per_annot)
+#try:
+#  word_mean = numwords / numannotations
+#except ZeroDivisionError:
+#  word_mean = 0
+#print annotations_str
+print 'number of submissions: %d' % submit_counts.get(assignment.WorkerId)
+print 'number of annotations: %d' % numannotations
+print 'mean wordcount per annotation: %f' % word_mean
+print 'std wordcount per annotation: %f' % word_std
+increment_dict(annotation_counts_milestone, assignment.WorkerId, [numannotations])
+increment_dict(word_means_milestone, assignment.WorkerId, [word_mean])
+increment_dict(word_stds_milestone, assignment.WorkerId, [word_std])
+"""
+"""
 for key,value in annotation_counts_milestone.iteritems():
   wid = key
   annotation_counts = annotation_counts_milestone.get(wid)
@@ -183,7 +309,6 @@ for key,value in annotation_counts_milestone.iteritems():
   #print new_dict
   #plot_dict(new_dict)
   #plt.bar(arange(0.5,len(sorted_counts),1), sorted_counts)
-  """
 for key,value in word_means_milestone.iteritems():
   wid = key
   new_values = value
@@ -205,7 +330,8 @@ for key,value in word_means_milestone.iteritems():
   #print 'annotation count evolution for worker ' + wid
   #print new_dict
   #plot_dict(new_dict)
-  """
+"""
+
 
 #print word_counts
 #print word_means_milestone

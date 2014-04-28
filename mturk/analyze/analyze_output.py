@@ -18,11 +18,15 @@ mturk = new_mturk_connection()
 
 url = 'http://cs.ubc.ca/~troniak/'
 template_name = 'template.html'
-videos = [      'bike', '50salad',  'cmu_salad','pbj',  'tum']#,'julia']
-start_times = [ 0.0,    180.0,      120.0,      2.0,    15.0]
-videos = [      'bike','bike','bike', '50salad', '50salad','50salad', 'cmu_salad', 'cmu_salad', 'cmu_salad','pbj','pbj','pbj','tum','tum','tum']#,'julia']
-start_times = [ 0.0,10.0,20.0,           180.0,190.0,200.0,               120.0,130.0,140.0,                   2.0,12.0,22.0,    15.0,25.0,35.0]
-target_video = 'wrench_hs'
+#videos = [      'bike', '50salad',  'cmu_salad','pbj',  'tum']#,'julia']
+videos = ['pbj']#,'julia']
+#start_times = [ 0.0,    180.0,      120.0,      2.0,    15.0]
+start_times = [0.0]
+#videos = [      'bike','bike','bike', '50salad', '50salad','50salad', 'cmu_salad', 'cmu_salad', 'cmu_salad','pbj','pbj','pbj','tum','tum','tum']#,'julia']
+videos = ['pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj']
+#start_times = [ 0.0,10.0,20.0,           180.0,190.0,200.0,               120.0,130.0,140.0,                   2.0,12.0,22.0,    15.0,25.0,35.0 ]
+start_times = [0.0,2.5,5.0,7.5,10.0,12.5,15.0,17.5,20.0,22.5,25.0,27.5,30.0]
+target_video = 'pbj'
 target_start_time = 0
 inputs = sys.argv
 output_name= inputs[1] #skip first input argument (script name)
@@ -53,8 +57,8 @@ output_dir_name = ''+output_name+'/'
 if(os.path.isfile('/Users/troniak/Downloads/'+output_name+'.csv')):
     shutil.move('/Users/troniak/Downloads/'+output_name+'.csv', '../output/'+output_name+'.csv')
 
-for a in [1]:#target_video,target_start_time in zip(videos,start_times):
-#for target_video,target_start_time in zip(videos,start_times):
+#for a in [1]:#target_video,target_start_time in zip(videos,start_times):
+for target_video,target_start_time in zip(videos,start_times):
     loopcount += 1
     csvreader = init_csv('../output/'+output_name,'rb')
 #sortedlist = sorted(csvreader, key=operator.itemgetter(3), reverse=True)
@@ -118,7 +122,12 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                                 start_end = [[startTime,y],[endTime,y]]
                                 #print counter + (startTime - target_start_time) / (target_start_time+10)
                                 y = y+delta_y_counter#counter + ((startTime - target_start_time) / (target_start_time+10) )
-                                plt.plot(*zip(*itertools.chain.from_iterable(itertools.combinations(start_end, 2))), color = 'brown', marker = '|')
+                                if(workerId == 'A3SKQPPOKCZU88'):
+                                  plt.plot(*zip(*itertools.chain.from_iterable(itertools.combinations(start_end, 2))), color = 'blue', marker = '|')
+                                elif(workerId == 'A3DY78Q4FCWTXX'):
+                                  plt.plot(*zip(*itertools.chain.from_iterable(itertools.combinations(start_end, 2))), color = 'red', marker = '|')
+                                else:
+                                  plt.plot(*zip(*itertools.chain.from_iterable(itertools.combinations(start_end, 2))), color = 'green', marker = '|')
                                 #plt.scatter(startTimes,y,color='red')
                                 #plt.scatter(endTimes,y,color='blue')
                     for t1,t2 in zip(startTimes,endTimes):

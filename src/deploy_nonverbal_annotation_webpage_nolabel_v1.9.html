@@ -91,8 +91,9 @@ video::-webkit-media-controls {
 }
 
 .annotationTimeList {
-    width: 65px;
+    width: 45px;
     margin-right: 2px;
+    font-family:"Courier New"
 }
 
 #movieControlArea {
@@ -1959,6 +1960,7 @@ video::-webkit-media-controls {
         //video_title = '${title}';
         video_title = ''; //don't allow title to be seen when deployed
         noMoreActionsStr = '';
+        analyzeStartTimesStr = '';
         
         if(noMoreActionsStr == 'on'){
             noMoreCheckbox.checked = true;
@@ -1974,6 +1976,7 @@ video::-webkit-media-controls {
             analyzeStartTimesArr = analyzeStartTimesStr.split('|');
             analyzeEndTimesArr = analyzeEndTimesStr.split('|');
             analyzeTagsArr = analyzeTagsStr.split('|');
+            alert(analyzeStartTimesStr);
             
             // Sanity check
             if( analyzeStartTimesArr.length != analyzeEndTimesArr.length ) {
@@ -2035,6 +2038,12 @@ video::-webkit-media-controls {
             case 70: // "f" key input
                 playOrPause();
                 break;            
+            case 81: // "q" key input
+                gotoStart();
+                break;            
+            case 87: // "w" key input
+                gotoEnd();
+                break;            
             case 86: // "v" key input
                 moveCurrentTime('forward', 'frame', 1, false);
                 break;            
@@ -2051,7 +2060,9 @@ video::-webkit-media-controls {
                 setStartTimeText();
                 break;            
             case 13: // "enter" key input
-                submitForm();
+                if(event.shiftKey == true){
+                    submitForm();
+                }
                 break;            
             case 27: // "esc" key input
                 videoFullscreen();
@@ -2179,19 +2190,26 @@ video::-webkit-media-controls {
         return time;
     }
     function getVidDuration(){
+        //alert(video_end_time - video_start_time);
         return video_end_time - video_start_time;
     }
     function getBarValue(vidTime, seek_max){
         //alert(vidTime);
-        var value = (vidTime - video_start_time) / (video_end_time - video_start_time) * seek_max;
+        //alert(video_start_time);
+        var reltime = (vidTime - video_start_time)
+        //alert(reltime)
+        var value =  reltime / (video_end_time - video_start_time) * seek_max;
         //alert('value: ' + value);
         return value;
     }
     function setVidTime(time){
+        //alert(time);
         video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
+        //alert(video.currentTime);
         //video.currentTime = Math.max(video_start_time, Math.min(time, video_end_time));
         //video.currentTime = time;
         seek_bar.value = getBarValue(video.currentTime, seek_bar.max);
+        //alert(seek_bar.value);
     }
     function setVidTimeRelative(time){
         time = getRelativeTime(time);
@@ -2247,7 +2265,7 @@ video::-webkit-media-controls {
     
     function gotoStart() {
         pause();
-        setVidTime(video_start_time);
+        setVidTimeRelative(0.0);
         pausedTime = getCurrentVidTime() - EPSILON;
         //pausedTime = video.currentTime - EPSILON;
         //video.currentTime = 0.0;
@@ -2255,7 +2273,7 @@ video::-webkit-media-controls {
     
     function gotoEnd() {
         pause();
-        setVidTime(getVidDuration());
+        setVidTimeRelative(video_start_time+getVidDuration());
         //video.currentTime = video.duration;
         video.ended = false;
         pausedTime = getCurrentVidTime() - EPSILON;
@@ -2343,7 +2361,16 @@ video::-webkit-media-controls {
         }
         
     }
-
+    function gotoStartAnnot(annotID){
+        var elem = document.getElementById(annotID);
+        var startTime = parseFloat(elem.childNodes.item(0).value);
+        setVidTimeRelative(startTime);
+    }
+    function gotoEndAnnot(annotID){
+        var elem = document.getElementById(annotID);
+        var endTime = parseFloat(elem.childNodes.item(1).value);
+        setVidTimeRelative(endTime);
+    }
     function newAnnotation(divName,annotID,startTimeStr,endTimeStr,annotation_text){
         var newdiv = document.createElement("div");
         var currentdate = new Date();
@@ -2352,12 +2379,17 @@ video::-webkit-media-controls {
         // changing the order of the inputs below will affect "editAnnotation(divName, annotID)" function
         newdiv.innerHTML = '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeStr + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeStr + '">';
-        newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + annotation_text + '">';
+        newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),220)+'px; font-family:\"Courier New\">';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationTime" hidden="true" readonly="readonly" value="' + annotation_time + '">';
-        newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button">';
-        newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button">';            
-        newdiv.innerHTML = newdiv.innerHTML + '<input value="X" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button">';
+        newdiv.innerHTML = newdiv.innerHTML + '<br>';
+        newdiv.innerHTML = newdiv.innerHTML + '<input value="|<< Start" onclick="gotoStartAnnot(\'' + annotID + '\')" type="button"">';
+        newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button"">';
+        newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button"">';            
+        newdiv.innerHTML = newdiv.innerHTML + '<input value="Delete" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button"">';
+        newdiv.innerHTML = newdiv.innerHTML + '<input value="End >>|" onclick="gotoEndAnnot(\'' + annotID + '\')" type="button"">';
+        newdiv.innerHTML = newdiv.innerHTML + '<hr>';
         document.getElementById(divName).appendChild(newdiv);
+        //document.getElementById(divName).childNodes.item(2).style.width = ((document.getElementById(divName).childNodes.item(2).value.length + 1) * 8)
     }
 
     function newAnnotationSlider(annotID,startTimeStr,endTimeStr,annotation_text){
@@ -2390,6 +2422,7 @@ video::-webkit-media-controls {
                 annotEle.childNodes[0].value = startTimeText.value;
                 annotEle.childNodes[1].value = endTimeText.value;
                 annotEle.childNodes[2].value = window.prompt("Please enter a tag for this ACTION",annotEle.childNodes[2].value);
+                //annotEle.childNodes[2].style="width: '+((annotEle.childNodes[2].value.length+1)*7)+'px; font-family:\"Courier New\"";
 
                 $("#slider_"+editAnnotID).val([startVal,endVal]);
                
@@ -2631,13 +2664,13 @@ video::-webkit-media-controls {
     <div id="annotationListOuterArea">
         
         <div id="annotationListInnerArea">
-            <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start Time">
-            <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End Time">
+            <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start">
+            <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End">
             <input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="Tag">
             <hr>
         </div>
         <br>
-        <input id="no_more_checkbox" class="annotationTimeList" name="noMoreActions" type="checkbox"> The video contains no more actions. 
+        <!--input id="no_more_checkbox" class="annotationTimeList" name="noMoreActions" type="checkbox"> The video contains no more actions.-->
         <br>
         <!--input id="b_removeAnnotation" value="Undo Last Annotation" onclick="removeAnnotate('annotationListInnerArea', -1)" type="button"-->
     </div>
@@ -2645,7 +2678,6 @@ video::-webkit-media-controls {
     
     <div id="movieControlArea">
         
-        <!--input id="b_gotoStart" value="Start" onclick="gotoStart()" type="button"-->
         <input id="b_playOrPause" class="playOrPauseButton" value="Play/Pause" onclick="playOrPause()" type="button">
             
         <div id="sliderArea">
@@ -2653,12 +2685,12 @@ video::-webkit-media-controls {
             <input id="sliderBar" class="sliderBar" type="range" min="-3.0" max="3.0" value="0" step=".04" onchange="adjustVideoWithSlider()">
             <label id="labelPlus" class="sliderLabels">+10%</label>
         </div>        
-            
-        <input id="b_backwardOneSec" class="movieControls" value="<< 1 sec" onclick="moveCurrentTime('backward', 'second', 1, false)" type="button">
-        <input id="b_backwardOneFrame" class="movieControls" value="<< 1 frame" onclick="moveCurrentTime('backward', 'frame', 1, false)" type="button">
-        <input id="b_forwardOneFrame" class="movieControls" value=">> 1 frame" onclick="moveCurrentTime('forward', 'frame', 1, false)" type="button">
-        <input id="b_forewardOneSec" class="movieControls" value=">> 1 sec" onclick="moveCurrentTime('foreward', 'second', 1, false)" type="button">
-        <!--input id="b_gotoEnd" value="End" onclick="gotoEnd()" type="button"-->
+        <input id="b_gotoStart" value="|<< S" onclick="gotoStart()" type="button">
+        <input id="b_backwardOneSec" class="movieControls" value="<< 1s" onclick="moveCurrentTime('backward', 'second', 1, false)" type="button">
+        <input id="b_backwardOneFrame" class="movieControls" value="<| 1f" onclick="moveCurrentTime('backward', 'frame', 1, false)" type="button">
+        <input id="b_forwardOneFrame" class="movieControls" value="1f |>" onclick="moveCurrentTime('forward', 'frame', 1, false)" type="button">
+        <input id="b_forewardOneSec" class="movieControls" value="1s >>" onclick="moveCurrentTime('foreward', 'second', 1, false)" type="button">
+        <input id="b_gotoEnd" value="E >>|" onclick="gotoEnd()" type="button">
         
         <!-- HACK: use disabled buttons for labels (to fix)-->
         <!--
@@ -2708,6 +2740,8 @@ video::-webkit-media-controls {
     <div id="hotkeyInstArea">
         <b>Keyboard Hotkeys</b><br/>
         Play/Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> f<br/>
+        << goto start&nbsp;&nbsp;&nbsp;==>&nbsp;q<br/>
+        >> goto end&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;w<br/>
         << 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;c<br/>
         >> 1 frame&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;v<br/>
         << 1 sec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;z<br/>
@@ -2715,7 +2749,7 @@ video::-webkit-media-controls {
         Set Start Time ==> s<br/>
         Set End Time ==> e<br/>
         Annotate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==> a<br/>
-        Submit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;enter<br/>
+        Submit&nbsp;==>&nbsp;shift-enter<br/>
         <!--Fullscreen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;==>&nbsp;esc <br/>-->
     </div>
 

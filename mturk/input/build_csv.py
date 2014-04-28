@@ -54,30 +54,31 @@ if(len(input_filenames) > 1):
                         absEndTime = float(baseTime)+float(endTime)
                         csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
 else:
-    videos = ['50salad']#,'bike','50salad','cmu_salad','pbj','tum']#,'julia']
-    start_times = [180.0]#0.0,0.0,180.0,120.0,2.0,15.0]
-    vid_resolutions = [10.0,30.0]#2.0, 5.0, 10.0, 20.0, 30.0]
-    overlap_diviser = 1
+    videos = ['rwa','rwd']#,'bike','50salad','cmu_salad','pbj','tum']#,'julia']
+    videos_str = '_'.join(videos)
+    start_times = [5.0,2.0]#0.0,0.0,180.0,120.0,2.0,15.0]
+    end_times   = [185.0,112.0]#0.0,0.0,180.0,120.0,2.0,15.0]
+    vid_resolutions = [10.0]#2.0, 5.0, 10.0, 20.0, 30.0]
+    overlap_diviser = 1.0
     max_resolution = vid_resolutions[-1]
 
-    csvwriter_all = init_csv(''+'5at5','w')
+    csvwriter_all = init_csv(videos_str,'w')
 
     for resolution in vid_resolutions:
-        csvwriter_eachres = init_csv(''+'5at5_'+str(int(resolution)),'w')
-        for video,start_time in zip(videos,start_times):
+        csvwriter_eachres = init_csv(''+videos_str+str(int(resolution)),'w')
+        for video,start_time,end_time in zip(videos,start_times,end_times):
             vidmp4 = url + video + '.mp4'
             vidwebm = url + video + '.webm'
-            for i,j in zip( arange(start_time,start_time+max_resolution+resolution,resolution), \
-                            arange(start_time+resolution/overlap_diviser,start_time+max_resolution+resolution,resolution)):
-                if(i+resolution <= start_time+max_resolution):
-                    csvwriter_all.writerow([vidmp4, vidwebm, '', i, i+resolution])
-                    csvwriter_eachres.writerow([vidmp4, vidwebm, '', i, i+resolution])
-                if(overlap_diviser != 1 and j+resolution <= start_time+max_resolution):
-                    csvwriter_all.writerow([vidmp4, vidwebm, '', j, j+resolution])
-                    csvwriter_eachres.writerow([vidmp4, vidwebm, '', j, j+resolution]) #empty title
+            if (overlap_diviser == 1):
+              for i in arange(start_time,end_time,resolution):
+                csvwriter_all.writerow([vidmp4, vidwebm, '', i, i+resolution])
+                csvwriter_eachres.writerow([vidmp4, vidwebm, '', i, i+resolution])
+            else: #overlap_diviser != 1
+              for j in arange(start_time,end_time,resolution/overlap_diviser):
+                csvwriter_all.writerow([vidmp4, vidwebm, '', j, j+resolution])
+                csvwriter_eachres.writerow([vidmp4, vidwebm, '', j, j+resolution]) #empty title
 
-
-#csvfile = open('from_output.csv', 'rb')
+#csvfile = open('', 'rb')
 #csvreader = csv.reader(csvfile, delimiter=',')
 #for row in csvreader:
 #    print row
