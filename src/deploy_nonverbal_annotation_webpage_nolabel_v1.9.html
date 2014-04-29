@@ -2384,7 +2384,11 @@ video::-webkit-media-controls {
         newdiv.innerHTML = newdiv.innerHTML + '<label>' + annotCntStr  + '</label>';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeStr + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeStr + '">';
+<<<<<<< HEAD
         newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),200)+'px; font-family:\"Courier New\">';
+=======
+        newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),220)+'px; font-family:\"Courier New\">';
+>>>>>>> c980a5a864408c8e5a5d815b9e73a4f9d049bc22
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationTime" hidden="true" readonly="readonly" value="' + annotation_time + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<br>';
         newdiv.innerHTML = newdiv.innerHTML + '<input value="|<< Start" onclick="gotoStartAnnot(\'' + annotID + '\')" type="button"">';
@@ -2669,7 +2673,10 @@ video::-webkit-media-controls {
     <div id="annotationListOuterArea">
         
         <div id="annotationListInnerArea">
+<<<<<<< HEAD
             <label>ID</label>
+=======
+>>>>>>> c980a5a864408c8e5a5d815b9e73a4f9d049bc22
             <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start">
             <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End">
             <input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="Tag">
