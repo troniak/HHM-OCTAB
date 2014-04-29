@@ -1967,16 +1967,15 @@ video::-webkit-media-controls {
         }
 
         //ground-truth annotation display
-        analyzeStartTimesStr = "${gt_start_times}";
-        analyzeEndTimesStr = "${gt_end_times}";
-        analyzeTagsStr = "${gt_tags}";
+        analyzeStartTimesStr = '${gt_start_times}';
+        analyzeEndTimesStr = '${gt_end_times}';
+        analyzeTagsStr = '${gt_tags}';
 
         if(analyzeStartTimesStr != ''){
             // Populate pre-defined annotation list
             analyzeStartTimesArr = analyzeStartTimesStr.split('|');
             analyzeEndTimesArr = analyzeEndTimesStr.split('|');
             analyzeTagsArr = analyzeTagsStr.split('|');
-            alert(analyzeStartTimesStr);
             
             // Sanity check
             if( analyzeStartTimesArr.length != analyzeEndTimesArr.length ) {
@@ -2407,12 +2406,11 @@ video::-webkit-media-controls {
         start_bar_value = getBarValue(start_time,seek_bar.max);
         end_bar_value   = getBarValue(end_time,seek_bar.max);
         document.getElementById(slider_divName).appendChild(newslider);
-        $('#slider_'+annotID).noUiSlider({
+        /*$('#slider_'+annotID).noUiSlider({
              range: [0,seek_bar.max]
              ,start: [start_bar_value,end_bar_value]
              ,connect: true 
-            //,start: [start_bar_value,end_bar_value]
-        },true).attr('disabled', 'disabled');
+        },true).attr('disabled', 'disabled');*/
     }
     
     function annotateOrUpdate(divName) {

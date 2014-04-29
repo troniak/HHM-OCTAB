@@ -1967,16 +1967,15 @@ video::-webkit-media-controls {
         }
 
         //ground-truth annotation display
-        analyzeStartTimesStr = "${gt_start_times}";
-        analyzeEndTimesStr = "${gt_end_times}";
-        analyzeTagsStr = "${gt_tags}";
+        analyzeStartTimesStr = '${gt_start_times}';
+        analyzeEndTimesStr = '${gt_end_times}';
+        analyzeTagsStr = '${gt_tags}';
 
         if(analyzeStartTimesStr != ''){
             // Populate pre-defined annotation list
             analyzeStartTimesArr = analyzeStartTimesStr.split('|');
             analyzeEndTimesArr = analyzeEndTimesStr.split('|');
             analyzeTagsArr = analyzeTagsStr.split('|');
-            alert(analyzeStartTimesStr);
             
             // Sanity check
             if( analyzeStartTimesArr.length != analyzeEndTimesArr.length ) {
@@ -2384,11 +2383,7 @@ video::-webkit-media-controls {
         newdiv.innerHTML = newdiv.innerHTML + '<label>' + annotCntStr  + '</label>';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeStr + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeStr + '">';
-<<<<<<< HEAD
         newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),200)+'px; font-family:\"Courier New\">';
-=======
-        newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),220)+'px; font-family:\"Courier New\">';
->>>>>>> c980a5a864408c8e5a5d815b9e73a4f9d049bc22
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationTime" hidden="true" readonly="readonly" value="' + annotation_time + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<br>';
         newdiv.innerHTML = newdiv.innerHTML + '<input value="|<< Start" onclick="gotoStartAnnot(\'' + annotID + '\')" type="button"">';
@@ -2411,12 +2406,11 @@ video::-webkit-media-controls {
         start_bar_value = getBarValue(start_time,seek_bar.max);
         end_bar_value   = getBarValue(end_time,seek_bar.max);
         document.getElementById(slider_divName).appendChild(newslider);
-        $('#slider_'+annotID).noUiSlider({
+        /*$('#slider_'+annotID).noUiSlider({
              range: [0,seek_bar.max]
              ,start: [start_bar_value,end_bar_value]
              ,connect: true 
-            //,start: [start_bar_value,end_bar_value]
-        },true).attr('disabled', 'disabled');
+        },true).attr('disabled', 'disabled');*/
     }
     
     function annotateOrUpdate(divName) {
@@ -2673,10 +2667,7 @@ video::-webkit-media-controls {
     <div id="annotationListOuterArea">
         
         <div id="annotationListInnerArea">
-<<<<<<< HEAD
             <label>ID</label>
-=======
->>>>>>> c980a5a864408c8e5a5d815b9e73a4f9d049bc22
             <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start">
             <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End">
             <input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="Tag">
