@@ -152,8 +152,8 @@ for hit in hits:
         old_hit = True
         for assignment in assignments:
             #if(1):
-            #if(assignment.AssignmentStatus == 'Submitted'):
-            if(assignment.WorkerId == 'A1BLX7N12KAS0U'):
+            if(assignment.AssignmentStatus == 'Submitted'):
+            #if(assignment.WorkerId == 'A1BLX7N12KAS0U'):
             #if(assignment.WorkerId in worker_milestones.keys()):
                 assignmentcount += 1
                 print "HIT#: %d"        % hitcount

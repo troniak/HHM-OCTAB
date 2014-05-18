@@ -2380,10 +2380,10 @@ video::-webkit-media-controls {
         if(annotCnt<10)
           annotCntStr = '0' + annotCntStr;
         newdiv.innerHTML = ''
-        newdiv.innerHTML = newdiv.innerHTML + '<label>' + annotCntStr  + '</label>';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeStr + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeStr + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),200)+'px; font-family:\"Courier New\">';
+        newdiv.innerHTML = newdiv.innerHTML + '<label>' + annotCntStr  + '</label>';
         newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationTime" hidden="true" readonly="readonly" value="' + annotation_time + '">';
         newdiv.innerHTML = newdiv.innerHTML + '<br>';
         newdiv.innerHTML = newdiv.innerHTML + '<input value="|<< Start" onclick="gotoStartAnnot(\'' + annotID + '\')" type="button"">';
@@ -2667,10 +2667,10 @@ video::-webkit-media-controls {
     <div id="annotationListOuterArea">
         
         <div id="annotationListInnerArea">
-            <label>ID</label>
             <input class="annotationTimeList" type="text" name="startTimeList" readonly="readonly" value="Start">
             <input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="End">
             <input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="Tag">
+            <label>ID</label>
             <hr>
         </div>
         <br>
