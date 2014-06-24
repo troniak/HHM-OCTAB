@@ -15,9 +15,9 @@ videos = ['pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj','pbj
 #start_times = [ 0.0,10.0,20.0,           180.0,190.0,200.0,               120.0,130.0,140.0,                   2.0,12.0,22.0,    15.0,25.0,35.0]
 start_times = [0.0,2.5,5.0,7.5,10.0,12.5,15.0,17.5,20.0,22.5,25.0,27.5,30.0]
 fps = 25
-vid_len = 40
+vid_len = 195
 inputs = sys.argv
-target_video = 'pbj'
+target_video = 'rwa'
 target_start_time = 0#180.0
 
 def rowval(row,key):
@@ -27,6 +27,8 @@ def rowval(row,key):
 for a in [1]:
   annotation_matrix = zeros(shape=(fps*vid_len,fps*vid_len))
   tag_matrix = zeros(shape=(fps*vid_len,fps*vid_len), dtype=np.object)#, itemsize=256)
+  #duration_matrix = zeros(shape=(len(startTimes),2))
+  #duration_tag_matrix = zeros(shape=(len(startTimes),1), dtype=np.object)#, itemsize=256)
   output_name = inputs[1]
   if(os.path.isfile('/Users/troniak/Downloads/'+output_name+'.csv')):
     shutil.move('/Users/troniak/Downloads/'+output_name+'.csv', '../output/'+output_name+'.csv')
@@ -48,13 +50,16 @@ for a in [1]:
       video_name   = url2name(rowval(rowA,'Input.video_url_webm'))
       vid_start_time= float(rowval(rowA,'Input.start_time'))
       if(video_name == target_video):
+      #if(1):
         #print video_name
-        for startTime,endTime,tag in zip(startTimes, endTimes, tags):
-          print '%f, %f' % (fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime)
+        for startTime,endTime,tag,cnt in zip(startTimes, endTimes, tags, arange(len(startTimes))):
+          #print '%f, %f' % (fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime)
+          print '%f, %f, %s' % (fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*(endTime-startTime), tag)
           #annotation_matrix[startTime,endTime] += 1
           annotation_matrix[fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime] += 1
-          tag_matrix[fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime] = tag
-
+          #duration_matrix[cnt, 1] += 1
+          tag_matrix[fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime] = str(tag_matrix[fps*vid_start_time + fps*startTime, fps*vid_start_time + fps*endTime])+tag+";"
+          #duration_tag_matrix[cnt,1] += tag+";"
 
   print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
   print 'results for video ' + target_video + ' @ time %.0f:' %target_start_time
@@ -68,4 +73,5 @@ for a in [1]:
   #last_frame = 210 * 25;
   #sio.savemat('annotation_matrix.mat', {'annotation_matrix':annotation_matrix[first_frame:last_frame,first_frame:last_frame], 'tag_matrix':tag_matrix[first_frame:last_frame,first_frame:last_frame]})
   sio.savemat('annotation_matrix.mat', {'annotation_matrix':annotation_matrix, 'tag_matrix':tag_matrix})
+  #sio.savemat('duration_matrix.mat', {'duration_matrix':duration_matrix, 'duration_tag_matrix':duration_tag_matrix})
   print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'

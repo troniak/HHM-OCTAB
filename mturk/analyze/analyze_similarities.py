@@ -13,6 +13,7 @@ import boto.mturk.connection as conn
 import boto.mturk.qualification as qual
 from mturk import *
 
+
 mturk = new_mturk_connection()
 headers = ['video_url_mp4', 'video_url_webm','title','start_time','end_time']
 url = 'http://cs.ubc.ca/~troniak/'
@@ -86,12 +87,6 @@ def increment_dict(diction, key, num_increment):
     else:
         diction[key] = num_increment
 
-#remove all files that match pattern within directory
-def purge(directory, pattern):
-    for f in os.listdir(directory):
-      if re.search(pattern, f):
-        os.remove(os.path.join(directory, f))
-
 """
 def append_to_dict(diction, key, value):
     if(diction.has_key(key)):
@@ -128,7 +123,6 @@ def url2name(url):
 output_dir_name = ''+output_name+'/'
 if(os.path.isfile('/Users/troniak/Downloads/'+output_name+'.csv')):
     shutil.move('/Users/troniak/Downloads/'+output_name+'.csv', '../output/'+output_name+'.csv')
-    purge('/Users/troniak/Downloads/', output_name+'*')
 
 for a in [1]:#target_video,target_start_time in zip(videos,start_times):
     csvreader = init_csv('../output/'+output_name,'rb')
@@ -138,20 +132,23 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
     mkdir(output_dir_name)
     rows = iter(csvreader)
     output_headers = next(rows)
-    print output_headers
+    #print output_headers
     for row in rows:
+        """
+        ['HITId', 'HITTypeId', 'Title', 'Description', 'Keywords', 'Reward', 'CreationTime', 'MaxAssignments', 'RequesterAnnotation', 'AssignmentDurationInSeconds', 'AutoApprovalDelayInSeconds', 'Expiration', 'NumberOfSimilarHITs', 'LifetimeInSeconds', 'AssignmentId', 'WorkerId', 'AssignmentStatus', 'AcceptTime', 'SubmitTime', 'AutoApprovalTime', 'ApprovalTime', 'RejectionTime', 'RequesterFeedback', 'WorkTimeInSeconds', 'LifetimeApprovalRate', 'Last30DaysApprovalRate', 'Last7DaysApprovalRate', 'Input.file_reference', 'Input.reference_start_time', 'Input.reference_end_time', 'Input.files_tocompare', 'Input.tocompare_start_times', 'Input.tocompare_end_times', 'Answer.similarity', 'Approve', 'Reject']
+        """
         hitId           = row[output_headers.index('HITId')]
         workerId        = row[output_headers.index('WorkerId')]
         status          = row[output_headers.index('AssignmentStatus')]
-        #mp4Filename     = row[output_headers.index('Input.video_url_mp4')]
-        webmFilename    = row[output_headers.index('Input.video_url_webm')]
-        videoStartTimeStr  = row[output_headers.index('Input.start_time')]
-        videoEndTime    = row[output_headers.index('Input.end_time')]
-        #noMoreActions   = row[output_headers.index('Answer.noMoreActions')]
-        videoTitlesStr  = strip_first(row[output_headers.index('Answer.annotationText')],'|')
-        startTimesStr   = strip_first(row[output_headers.index('Answer.startTimeList')],'|')
-        endTimesStr     = strip_first(row[output_headers.index('Answer.endTimeList')],'|')
+        file_reference  = row[output_headers.index('Input.file_reference')]
+        r_start_time    = float(row[output_headers.index('Input.reference_start_time')])
+        r_end_time      = float(row[output_headers.index('Input.reference_end_time')])
+        c_files         = row[output_headers.index('Input.files_tocompare')].split('|')
+        c_start_times   = [float(s) for s in row[output_headers.index('Input.tocompare_start_times')].split('|')]
+        c_end_times     = [float(s) for s in row[output_headers.index('Input.tocompare_end_times')].split('|')]
+        similarities    = [int(s) for s in row[output_headers.index('Answer.similarity')].split('|')]
 
+        """
         #quals = mturk.get_qualification_score(action_annotation_type_id, workerId)
         #if any(workerId in s for s in qualified_workers): #show results from qualified workers only
         if(1):#len(quals) > 0 and quals[0].IntegerValue >= 50): #show results from qualified workers only
@@ -191,8 +188,7 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                         increment_dict(vid_time_diff, url2name(webmFilename), abs(t1-t2));
                         increment_dict(vid_time_count, url2name(webmFilename), 1);
 
-                    #if(status == 'Submitted'): #only analyze results that have not yet been approved
-                    if(1): #analyze everything
+                    if(status == 'Submitted'): #only analyze results that have not yet been approved
                         #print 'writing file '+output_dir_name+'analysis_'+hitId+'.html'
                         writer = init_file(output_dir_name+'analysis_'+workerId+'_'+hitId+'.html','wb')
                         reader = init_file(template_name,'rb')
@@ -202,8 +198,7 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
                             elif(line.find(video_end_pattern) != -1):
                                 writer.write(line.replace(video_end_pattern,videoEndTime))
                             elif(line.find(webm_pattern) != -1):
-                                #writer.write(line.replace(webm_pattern,webmFilename).replace('troniak','dtroniak').replace('ubc','cmu').replace('ca','edu'))
-                                writer.write(line.replace(webm_pattern,webmFilename))
+                                writer.write(line.replace(webm_pattern,webmFilename).replace('troniak','dtroniak').replace('ubc','cmu').replace('ca','edu'))
                             elif(line.find(tags_pattern) != -1):
                                 writer.write(line.replace(tags_pattern,videoTitlesStr))
                             elif(line.find(start_pattern) != -1):
@@ -244,3 +239,4 @@ for a in [1]:#target_video,target_start_time in zip(videos,start_times):
         #    absStartTime = float(baseTime)+float(startTime)
         #    absEndTime = float(baseTime)+float(endTime)
         #    csvwriter_all.writerow([mp4Filename,webmFilename,videoTitle,str(absStartTime),str(absEndTime)])
+        """

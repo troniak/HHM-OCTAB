@@ -7,3 +7,4 @@ access_key = f.readline()
 secret_key = f.readline()
 def new_mturk_connection():
     return conn.MTurkConnection(aws_access_key_id=access_key, aws_secret_access_key=secret_key, is_secure=True, port=None, proxy=None, proxy_port=None, proxy_user=None, proxy_pass=None, host=None, debug=0, https_connection_factory=None, security_token=None, profile_name=None)
+

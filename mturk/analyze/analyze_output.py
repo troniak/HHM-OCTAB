@@ -163,16 +163,19 @@ for target_video,target_start_time in zip(videos,start_times):
 
 #print wordcounts
     #plt.show()
+    print '.',
+    sys.stdout.flush()
     plt.savefig('../output/figures/' + '_' + str(loopcount) + '_' + str(target_video) + '_' + str(target_start_time) + '.png')    #save("signal", ext="png", close=False, verbose=True)
     plt.close()
-    print 'submit_count: ' + str(submit_count)
-    print 'annotation_count: ' + str(annotation_count)
-    print 'bonus_count: ' + str(bonus_count)
+    #print 'submit_count: ' + str(submit_count)
+    #print 'annotation_count: ' + str(annotation_count)
+    #print 'bonus_count: ' + str(bonus_count)
     #print 'number of videos annotated (/30): ' + str(vidcounts)
     #plot_dict(wordcounts)
     #plot_dict(segcounts)
     #plot_dict(dict_ratio(segcounts, vidcounts))
     #print 'average time per annotation: ' + str(dict_ratio(vid_time_diff,vid_time_count))
+print 'Done!'
 #print vid_time_diff
 #print vid_time_count
 #plot_dict(vidcounts)
