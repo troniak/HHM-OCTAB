@@ -1,0 +1,356 @@
+<html>
+<head>
+<title>Similarity</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<style>
+  body {
+    color: #444;
+    font: 14px/21px Arial, Helvetica, sans-serif;
+  }
+  #wrapper {
+    margin: 10px auto;
+    padding: 1em;
+    /* Shadow */
+    box-shadow: 0 0 5px #000;
+    -webkit-box-shadow: 0 0 5px #000;
+    -moz-box-shadow: 0 0 5px #000;
+    /* Auto-fit content */
+    /*width: -moz-fit-content;*/
+    width: 700px;
+    display: table;
+    max-width: 90%;
+  }
+  h3 {
+    margin: 0;
+  }
+  #categories {
+    list-style: none;
+  }
+  .question_image {
+    margin:auto;
+    max-width:100%;
+    max-height:100%;
+    /* Shadow */
+    box-shadow: 0 0 5px #000;
+    -webkit-box-shadow: 0 0 5px #000;
+    -moz-box-shadow: 0 0 5px #000;
+  }
+  
+</style>
+
+</head>
+
+<div id="wrapper">
+
+<form name="mturk_form" method="post" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit">
+<input type="hidden" value="" name="assignmentId" id="assignmentId" />
+
+<style>
+#guideline_box {
+}
+#guideline {
+  width: 97%;
+  height: 150px;
+  overflow: auto;
+  border-style: solid;
+  border-width: 1px;
+  padding: 5px;
+}
+.criterion_table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.criterion_table tr td {
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+}
+.criterion_table tr:nth-child(1) td:nth-child(1) {
+  width:25%
+}
+.criterion_table tr td {
+  text-align: left;
+  vertical-align: top;
+}
+.bold_text {
+  font: arial;
+  font-size: 13;
+  font-weight: bold;
+}
+.instruction_text {
+  font: arial;
+  font-size: 12;
+}
+</style>
+<div id="guideline_box">
+  <span class="bold_text">Detailed Instructions (click) <span id="guideline_arrow">&rarr;</span></span>
+  <div id="guideline" class="instruction_text" style="display:none">
+    <p>Select how similar each action is to the reference action according to the following criteria.</p>
+    <table class="criterion_table instruction_text">
+        <tr> <td><b>Not-at-all Similar</b></td> <td> NO action-elements are common to both actions. </td> </tr>
+        <tr> <td><b>Sort-of Similar</b></td> <td>SOME action-elements are common to both actions. </td> </tr>
+        <tr> <td><b>Moderately Similar</b></td> <td> HALF of the action-elements are common to both actions. </td> </tr>
+        <tr> <td><b>Very Similar</b></td> <td> MOST action-elements are common to both actions. </td> </tr>
+        <tr> <td><b>Identical</b></td> <td> ALL action-elements are common to both actions. </td> </tr>
+    </table>
+    <p>Some examples of ACTION-ELEMENTs:</p>
+    <table class="criterion_table instruction_text">
+        <tr><th><b>ELEMENT</b></th><th><b>EXAMPLE</b></th></tr>
+        <tr><td>object </td><td>open bottle == pick up bottle</td></tr>
+        <tr><td>direction</td><td>push bottle left == slide knife left</td></tr>
+        <tr><td>tool used</td><td>cut with knife == transport with knife</td></tr>
+        <tr><td>bodily motion </td><td>Rotate right wrist == rotate left hand</td></tr>
+        <tr><td>fingers used </td><td>grasp bottle with pinky and thumb == flex pinky and thumb</td></tr>
+        <tr><td>degree of action </td><td>push forcefully == pull forcefully</td></tr>
+        <tr><td>action outcome </td><td>open bottle == open jar</td> </tr>
+    </table>
+  </div>
+</div><br/>
+
+<span style="font: arial; font-size: 14px; font-weight:bold;">Step 1 - Watch the reference action (click to play):</span>
+<div style='width:70%; background-color:#F8F5D8; margin:auto;'>
+  <video id="vid_0" class="question_image">
+    <source src="http://www.cs.ubc.ca/~troniak/${file_reference}.webm" type="video/webm"/>
+    <source src="http://www.cs.cmu.edu/~dtroniak/nsh_shop_120.webm" type="video/webm"/>
+  </video>
+</div>
+
+<span style="font: arial; font-size: 14px; font-weight:bold;">Step 2 - For each of the actions below, determine their LEVEL OF SIMILARITY to the reference action:</span>
+<div id="vidContainer" class="outer_div">
+</div>
+
+<!-- STARTSCALE -->
+<style>
+.outer_div {
+  position: relative;
+}
+.canvas_div {
+  width: 90%;
+  height: 5px;
+}
+.canvas_div canvas {
+  width: 100%;
+  height: 5px;
+  /*position: relative;*/
+  top: 0;
+  left: 0;
+}
+.radio_div {
+  width: 100%;
+  height: 75px;
+  /*position: relative;*/
+  top: 0;
+  left: 0;
+}
+.radio_div table {
+  width: 80%;
+  border: none;
+  margin: auto;
+  border-collapse: collapse;
+}
+.radio_div table tr td {
+  font-size: 14px;
+  background-color: transparent;
+  vertical-align: top;
+  text-align: center;
+  border: none;
+  padding: 0px;
+}
+.radio_div table tr:nth-child(1) td {
+  width: 11%;
+  height: 25px;
+  vertical-align: middle;
+}
+</style>
+<script type="text/javascript">
+  var vidCnt = 0;
+  var similarity_levels = ["Not-at-all Similar","","Sort-of Similar","","Moderately Similar","","Very Similar","","Identical"];
+  var reference_vid;
+  var stArr, etArr;
+  
+  function setup() {
+    reference_vid = document.getElementById("vid_0");
+
+    //disableSubmit();
+    
+    reference_vid.addEventListener("timeupdate", function(){vid_timeupdate(0);});
+    reference_vid.addEventListener("click", function(){vid_play(0);});
+    
+    filesStr = 'nsh_shop_120|nsh_shop_120|nsh_shop_120'
+    stsStr = '5|5|3|10'
+    etsStr = '6|8|5|14'
+    /*deploy_start
+    filesStr = '${files_tocompare}';
+    stsStr = '${reference_start_time}'+'|${tocompare_start_times}'
+    etsStr = '${reference_end_time}'+'|${tocompare_end_times}'
+    deploy_end*/
+    fileArr = filesStr.split('|');
+    urlsStr = 'http://www.cs.cmu.edu/~dtroniak/' + fileArr.join('.webm|http://www.cs.cmu.edu/~dtroniak/') + '.webm';
+    urlArr = urlsStr.split('|');
+    stArr = stsStr.split('|');
+    etArr = etsStr.split('|');
+    populateVideoList('vidContainer',urlArr);
+  }
+  function vid_timeupdate(vidCnt){
+    var vid = document.getElementById("vid_"+vidCnt);
+    if(vid.currentTime < stArr[vidCnt]){
+      //vid.pause();
+      vid.currentTime = stArr[vidCnt];
+      //vid.play();
+    }
+    if(vid.currentTime > etArr[vidCnt]){
+      vid.currentTime = stArr[vidCnt];
+      vid.pause();
+    }
+  }
+  function vid_play(vidCnt){
+    var vid = document.getElementById("vid_"+vidCnt);
+    vid.currentTime = stArr[vidCnt];
+    //alert(vid.currentTime);
+    vid.play();
+  }
+  function newVideo(divName,vidCnt,url){
+      var vidID = "vid_" + vidCnt;
+      var innerHTML = ''
+      innerHTML = innerHTML + '<div style="width:70%; background-color:#F8F5D8; margin:auto;">'
+      innerHTML = innerHTML + '<video id="'+vidID+'" ontimeupdate="vid_timeupdate('+vidCnt+')" class="question_image"  alt="" src="'+url+'"/>'
+      innerHTML = innerHTML + '<input type="image" id="playbtn_'+vidCnt+'" src="http://i.stack.imgur.com/LT3WE.png" alt="Play">'
+      innerHTML = innerHTML + '</div>'
+      var newdiv = document.createElement("div");
+      newdiv.innerHTML = innerHTML;
+      document.getElementById(divName).appendChild(newdiv);
+      var newvid = document.getElementById(vidID);
+      newvid.addEventListener('click',function(){vid_play(vidCnt)});
+  }
+  function newSimilarityScale(divName,scaleID){
+    var innerHTML = '';
+    innerHTML = innerHTML + '<div class="canvas_div">';
+    innerHTML = innerHTML + '<canvas id="line_canvas_'+scaleID+'"></canvas>';
+    innerHTML = innerHTML + '</div>';
+    innerHTML = innerHTML + '<div class="radio_div">';
+    innerHTML = innerHTML + '<table>';
+    innerHTML = innerHTML + '<tr>';
+    for(var i = 1; i < similarity_levels.length+1; i++){
+      //innerHTML = innerHTML + '<td><input type="radio" onclick="radioClicked(this);" name="item" value="'+i.toString()+'" /></td>';
+      innerHTML = innerHTML + '<td><input type="checkbox" name="similarity" value="'+i.toString()+'" /></td>';
+    }
+    innerHTML = innerHTML + '</tr>';
+    innerHTML = innerHTML + '<tr>';
+    for(var i = 0; i < similarity_levels.length; i++){
+      innerHTML = innerHTML + '<td>'+similarity_levels[i]+'</td>';
+    }
+    innerHTML = innerHTML + '</tr>';
+    innerHTML = innerHTML + '</table>';
+    innerHTML = innerHTML + '</div>';
+    var newdiv = document.createElement("div");
+    newdiv.setAttribute("id", scaleID);
+    newdiv.innerHTML = innerHTML;
+    document.getElementById(divName).appendChild(newdiv);
+    /*var ctx = document.getElementById("line_canvas_"+scaleID).getContext("2d");
+    ctx.lineWidth = 1;
+    ctx.fillStyle="#000000";
+    ctx.beginPath();
+    ctx.strokeStyle = "#888888";
+    ctx.lineWidth = 5;
+    ctx.moveTo(20, 25);
+    ctx.lineTo(280, 25);
+    ctx.stroke();*/
+  }
+
+  function populateVideoList(divName, urlArr) {
+      for( i = 0; i < urlArr.length; i++) {
+          vidCnt = vidCnt + 1;
+          var scaleID = "scale_" + vidCnt;
+          newVideo(divName, vidCnt, urlArr[i]);
+          newSimilarityScale(divName,scaleID);
+      }
+      //<div id="similarity_scale" class="outer_div"> </div>
+      //document.getElementById("annotationListOuterArea").scrollTop = document.getElementById("annotationListOuterArea").scrollHeight + 100;
+      //document.getElementById("annotationListOuterArea").scroll = document.getElementById("annotationListOuterArea").scrollTop;			
+	}
+
+
+  function radioClicked(radio) {
+    var dontSubmit = !window.turkGetParam || ("ASSIGNMENT_ID_NOT_AVAILABLE" == turkGetParam('assignmentId', ""));
+
+    
+    if (dontSubmit) {
+      radio.checked = false;
+    } else {
+      enableSubmit();
+    }
+    
+  }
+
+
+  function enableSubmit() {
+    if (document.getElementById("submitButton")) {
+      document.getElementById("submitButton").disabled = false;
+    }
+  }
+  function disableSubmit(){
+    if (document.getElementById("submitButton")) {
+      document.getElementById("submitButton").disabled = true;
+    }
+  }
+  //disable button on page load
+  if(window.attachEvent) {
+    window.attachEvent('onload', setup);
+  } else {
+    if(window.onload) {
+      var curronload = window.onload;
+      var newonload = function() {
+        curronload();
+        setup();
+      };
+      window.onload = newonload;
+    } else {
+      window.onload = setup;
+    }
+  }
+  
+</script>
+<!-- ENDSCALE -->
+
+
+
+<p><input type="submit" id="submitButton" value="Submit" /></p>
+</form>
+
+</div> <!-- wrapper -->
+
+<!--
+===============================
+-->
+<script src="https://images-na.ssl-images-amazon.com/images/G/01/javascripts/lib/jquery/jquery-1.6.4.min.js"></script>
+<script src="https://s3.amazonaws.com/mturk-public/externalHIT_v1.js"></script>
+<script>
+  $('document').ready( function() {
+    turkSetAssignmentID();
+    if ('true' == turkGetParam('hideForm', '')) {
+      $('#submitButton').hide();
+    }
+    var foo = false;
+    if ("ASSIGNMENT_ID_NOT_AVAILABLE" == turkGetParam('assignmentId', "")) {
+      foo = true;
+      $('#guideline_arrow').html('&darr;');
+      $('#guideline').show();
+    }
+    $('#guideline_box').click( function () {
+      if (foo) {
+        $('#guideline_arrow').html('&rarr;');
+        $('#guideline').slideUp();
+      } else {
+        $('#guideline_arrow').html('&darr;');
+        $('#guideline').slideDown();
+      }
+      foo = !foo;
+    })
+  });
+  
+</script>
+</body>
+
+</html>
+
