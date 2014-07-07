@@ -360,7 +360,8 @@ video::-webkit-media-controls {
             // changing the order of the inputs below will affect "editAnnotation(divName, annotID)" function
             newdiv.innerHTML = '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimesArr[i] + '">';
             newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimesArr[i] + '">';
-            newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + tagsArr[i] + '">';
+            //newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + tagsArr[i] + '">';
+            newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + tagsArr[i] + '" style="width: '+Math.max(((tagsArr[i].length+1)*7),200)+'px; font-family:\"Courier New\">';
             newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button">';
             //newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button">';            
             //newdiv.innerHTML = newdiv.innerHTML + '<input value="X" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button">';
@@ -745,7 +746,8 @@ video::-webkit-media-controls {
                 // changing the order of the inputs below will affect "editAnnotation(divName, annotID)" function
                 newdiv.innerHTML = '<input class="annotationTimeList" type="text"  name="startTimeList" readonly="readonly" value="' + startTimeText.value + '">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="endTimeList" readonly="readonly" value="' + endTimeText.value + '">';
-                newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + annotation_text + '">';
+                //newdiv.innerHTML = newdiv.innerHTML + '<input class="annotationTimeList" type="text" name="annotationText" readonly="readonly" value="' + annotation_text + '">';
+                newdiv.innerHTML = newdiv.innerHTML + '<input id="annotationText" class="annotationTimeList" rows="1" type="text" name="annotationText" value="' + annotation_text + '" style="width: '+Math.max(((annotation_text.length+1)*7),200)+'px; font-family:\"Courier New\">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="Play" onclick="playSelection(\'' + annotID + '\')" type="button">';
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="Edit" onclick="editAnnotation(\'' + divName + '\', \'' + annotID + '\')" type="button">';            
                 newdiv.innerHTML = newdiv.innerHTML + '<input value="X" onclick="removeAnnotate(\'' + divName + '\', \'' + annotID + '\')" type="button">';
@@ -901,29 +903,6 @@ video::-webkit-media-controls {
     <div id="instructions">
         <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
         </br>
-        <div id="instructionsImg" >
-            <h2>Task Instructions</h1>
-            <ul>
-                <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
-                <br/>
-                <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.cmu.edu/~dtroniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
-                <br/>
-                <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
-                <br/>
-                <li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>
-                <br/>
-                <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
-                <br/>
-                <li>Acceptable work contains at least FIVE clear ACTION annotations with PRECISE start- and end-timing.</li>
-                <br/>
-                <li>If the video contains LESS than FIVE clear ACTIONs, be sure to toggle the appropriate CHECKBOX.</li>
-                <br/>
-                <li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>
-                <br/>
-                <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
-            </ul>
-            <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
-        </div>
         <div id="label-container" class="label-container">
             <label id="label_title" class="videoLabels">Description: </label>
         </div>

@@ -3,42 +3,6 @@
 <title>Similarity</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-<style>
-  body {
-    color: #444;
-    font: 14px/21px Arial, Helvetica, sans-serif;
-  }
-  #wrapper {
-    margin: 10px auto;
-    padding: 1em;
-    /* Shadow */
-    box-shadow: 0 0 5px #000;
-    -webkit-box-shadow: 0 0 5px #000;
-    -moz-box-shadow: 0 0 5px #000;
-    /* Auto-fit content */
-    /*width: -moz-fit-content;*/
-    width: 700px;
-    display: table;
-    max-width: 90%;
-  }
-  h3 {
-    margin: 0;
-  }
-  #categories {
-    list-style: none;
-  }
-  .question_image {
-    margin:auto;
-    max-width:100%;
-    max-height:100%;
-    /* Shadow */
-    box-shadow: 0 0 5px #000;
-    -webkit-box-shadow: 0 0 5px #000;
-    -moz-box-shadow: 0 0 5px #000;
-  }
-  
-</style>
-
 </head>
 
 <div id="wrapper">
@@ -47,11 +11,61 @@
 <input type="hidden" value="" name="assignmentId" id="assignmentId" />
 
 <style>
+body {
+  color: #444;
+  font: 14px/21px Arial, Helvetica, sans-serif;
+}
+#wrapper {
+  margin: 10px auto;
+  padding: 1em;
+  /* Shadow */
+  box-shadow: 0 0 5px #000;
+  -webkit-box-shadow: 0 0 5px #000;
+  -moz-box-shadow: 0 0 5px #000;
+  /* Auto-fit content */
+  /*width: -moz-fit-content;*/
+  width: 700px;
+  display: table;
+  max-width: 90%;
+}
+h3 {
+  margin: 0;
+}
+#categories {
+  list-style: none;
+}
+.similarity_video{
+  border-top: 2px solid;
+  border-left: 2px solid;
+  border-right: 2px solid;
+}
+.similarity_input{
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+  border-right: 2px solid;
+}
+.question_image {
+  margin:auto;
+  margin-top:10px;
+  margin-bottom:10px;
+  max-width:300px;
+  max-height:300px;
+  /* Shadow */
+  box-shadow: 0 0 5px #000;
+  -webkit-box-shadow: 0 0 5px #000;
+  -moz-box-shadow: 0 0 5px #000;
+}
+.similarity_text{
+  margin-left: 30px;
+  max-width:100%;
+  max-height:100%;
+  width: 600px;
+}
 #guideline_box {
 }
 #guideline {
   width: 97%;
-  height: 150px;
+  height: 70px;
   overflow: auto;
   border-style: solid;
   border-width: 1px;
@@ -82,38 +96,10 @@
   font: arial;
   font-size: 12;
 }
-</style>
-<div id="guideline_box">
-  <span class="bold_text">Detailed Instructions (click) <span id="guideline_arrow">&rarr;</span></span>
-  <div id="guideline" class="instruction_text" style="display:none">
-    <p>Select how similar each action is to the reference action according to the following criteria.</p>
-    <table class="criterion_table instruction_text">
-        <tr> <td><b>Not-at-all Similar</b></td></tr>
-        <tr> <td><b>Sort-of Similar</b></td> </tr>
-        <tr> <td><b>Moderately Similar</b></td> </tr>
-        <tr> <td><b>Very Similar</b></td></tr>
-        <tr> <td><b>Identical</b></td></tr>
-    </table>
-    <p>When determining similarity between two actions, look out for things such as the object in the scene, the direction of action, the fingers used, etc.</p>
-  </div>
-</div><br/>
-
-<span style="font: arial; font-size: 14px; font-weight:bold;">Step 1 - Watch the reference action (click to play):</span>
-<div style='width:70%; background-color:#F8F5D8; margin:auto;'>
-  <video id="vid_0" class="question_image">
-    <source src="http://www.cs.ubc.ca/~troniak/${file_reference}.webm" type="video/webm"/>
-    <source src="http://www.cs.cmu.edu/~dtroniak/nsh_shop_120.webm" type="video/webm"/>
-  </video>
-</div>
-
-<span style="font: arial; font-size: 14px; font-weight:bold;">Step 2 - For each of the actions below, determine their LEVEL OF SIMILARITY to the reference action:</span>
-<div id="vidContainer" class="outer_div">
-</div>
-
-<!-- STARTSCALE -->
-<style>
 .outer_div {
   position: relative;
+  overflow:scroll; 
+  height:400px;
 }
 .canvas_div {
   width: 90%;
@@ -128,7 +114,7 @@
 }
 .radio_div {
   width: 100%;
-  height: 75px;
+  height: auto;
   /*position: relative;*/
   top: 0;
   left: 0;
@@ -140,7 +126,7 @@
   border-collapse: collapse;
 }
 .radio_div table tr td {
-  font-size: 14px;
+  font-size: 12px;
   background-color: transparent;
   vertical-align: top;
   text-align: center;
@@ -153,8 +139,34 @@
   vertical-align: middle;
 }
 </style>
+<div id="guideline_box">
+  <span class="bold_text">Detailed Instructions (click) <span id="guideline_arrow">&rarr;</span></span>
+  <div id="guideline" class="instruction_text" style="display:none">
+    <font color="red">GOAL</font>: Select how similar each action is to the given reference action AND determine what is most similar and most different between the two actions.</br>
+    <font color="red">TIP</font>: When determining similarity between two actions, look out for things such similar object(s) in the scene, direction of action, fingers used, etc.
+  </div>
+</div><br/>
+
+<span style="font: arial; font-size: 14px; font-weight:bold;">Step 1 - Watch the reference action (click to play):</span>
+<div style='width:70%; margin:auto;'>
+  <video id="vid_0" class="question_image">
+    <source src="http://www.cs.ubc.ca/~troniak/${file_reference}.webm" type="video/webm"/>
+    <source src="http://www.cs.cmu.edu/~dtroniak/nsh_shop_120.webm" type="video/webm"/>
+  </video>
+</div>
+
+<div id="step_2" class="outer_div"
+  <span style="font: arial; font-size: 14px; font-weight:bold;">Step 2 - For each of the actions below, please do the following:</span>
+  <ol>
+    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Select its LEVEL OF SIMILARITY to the reference action.</span></li>
+    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Tell us what aspect is MOST SIMILAR to the reference action.</span></li>
+    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Tell us what aspect is MOST DIFFERENT from the reference action.</span></li>
+  </ol>
+  <div id="vidContainer">
+  </div>
+</div>
+
 <script type="text/javascript">
-  var vidCnt = 0;
   var similarity_levels = ["Not-at-all Similar","","Sort-of Similar","","Moderately Similar","","Very Similar","","Identical"];
   var reference_vid;
   var stArr, etArr;
@@ -194,7 +206,7 @@
       vid.pause();
     }
   }
-  function vid_play(vidCnt){
+function vid_play(vidCnt){
     var vid = document.getElementById("vid_"+vidCnt);
     vid.currentTime = stArr[vidCnt];
     //alert(vid.currentTime);
@@ -203,15 +215,14 @@
   function newVideo(divName,vidCnt,url){
       var vidID = "vid_" + vidCnt;
       var innerHTML = ''
-      innerHTML = innerHTML + '<div style="width:70%; background-color:#F8F5D8; margin:auto;">'
-      innerHTML = innerHTML + '<video id="'+vidID+'" ontimeupdate="vid_timeupdate('+vidCnt+')" class="question_image"  alt="" src="'+url+'"/>'
+      innerHTML = innerHTML + '<div style="width:70%; margin:auto;">'
+      innerHTML = innerHTML + '<video id="'+vidID+'" onClick="vid_play('+vidCnt+')" ontimeupdate="vid_timeupdate('+vidCnt+')" class="question_image"  alt="" src="'+url+'"/>'
       innerHTML = innerHTML + '<input type="image" id="playbtn_'+vidCnt+'" src="http://i.stack.imgur.com/LT3WE.png" alt="Play">'
       innerHTML = innerHTML + '</div>'
       var newdiv = document.createElement("div");
       newdiv.innerHTML = innerHTML;
-      document.getElementById(divName).appendChild(newdiv);
-      var newvid = document.getElementById(vidID);
-      newvid.addEventListener('click',function(){vid_play(vidCnt)});
+      newdiv.setAttribute("class", "similarity_video");
+      return newdiv;
   }
   function newSimilarityScale(divName,scaleID){
     var innerHTML = '';
@@ -223,7 +234,8 @@
     innerHTML = innerHTML + '<tr>';
     for(var i = 1; i < similarity_levels.length+1; i++){
       //innerHTML = innerHTML + '<td><input type="radio" onclick="radioClicked(this);" name="item" value="'+i.toString()+'" /></td>';
-      innerHTML = innerHTML + '<td><input type="checkbox" name="similarity" value="'+i.toString()+'" /></td>';
+      //innerHTML = innerHTML + '<td><input type="checkbox" name="similarity" value="'+i.toString()+'" /></td>';
+      innerHTML = innerHTML + '<td><input type="radio" id="similarity_select_'+scaleID+'_'+i.toString()+'" name="similarity_'+scaleID+'" value="'+i.toString()+'" /></td>';
     }
     innerHTML = innerHTML + '</tr>';
     innerHTML = innerHTML + '<tr>';
@@ -232,11 +244,14 @@
     }
     innerHTML = innerHTML + '</tr>';
     innerHTML = innerHTML + '</table>';
+    innerHTML = innerHTML + '<input type="text" onClick="this.select()" value="Please enter the most SIMILAR aspect" class="similarity_text" id="similarity_text_'+scaleID+'" name="similarity_same_'+scaleID+'"/>';
+    innerHTML = innerHTML + '<input type="text" onClick="this.select()" value="Please enter the most DIFFERENT aspect" class="similarity_text" id="similarity_text_'+scaleID+'" name="similarity_diff_'+scaleID+'"/>';
     innerHTML = innerHTML + '</div>';
     var newdiv = document.createElement("div");
+    newdiv.setAttribute("class", "similarity_input");
     newdiv.setAttribute("id", scaleID);
     newdiv.innerHTML = innerHTML;
-    document.getElementById(divName).appendChild(newdiv);
+    return newdiv;
     /*var ctx = document.getElementById("line_canvas_"+scaleID).getContext("2d");
     ctx.lineWidth = 1;
     ctx.fillStyle="#000000";
@@ -250,10 +265,15 @@
 
   function populateVideoList(divName, urlArr) {
       for( i = 0; i < urlArr.length; i++) {
-          vidCnt = vidCnt + 1;
+          var vidCnt = i+1
+          var vidID = "vid_" + vidCnt;
           var scaleID = "scale_" + vidCnt;
-          newVideo(divName, vidCnt, urlArr[i]);
-          newSimilarityScale(divName,scaleID);
+          
+          video_div = newVideo(divName, vidCnt, urlArr[i]);
+          scale_div = newSimilarityScale(divName,scaleID);
+
+          document.getElementById(divName).appendChild(video_div);
+          document.getElementById(divName).appendChild(scale_div);
       }
       //<div id="similarity_scale" class="outer_div"> </div>
       //document.getElementById("annotationListOuterArea").scrollTop = document.getElementById("annotationListOuterArea").scrollHeight + 100;

@@ -9,6 +9,16 @@
     margin: 10px;
 }
 
+li {
+    margin: 0;
+    padding: 0.2em;
+}
+
+h2 {
+    margin: 0;
+    padding: 0.2em;
+}
+
 #movieArea {
     width: 480px;
     height: 320px;
@@ -60,7 +70,7 @@
     padding:5px;
     top: -15px;
 }
-video::-webkit-media-controls {
+#main-video::-webkit-media-controls {
   display:none !important;
 }
 
@@ -1902,7 +1912,7 @@ video::-webkit-media-controls {
     var endTimeText;
     var currentTimeText;
     var playingAndSetEndTime;
-    var instructionElement;
+    var instructionsElement;
     var pageContainger;
     var toggleIsPlay = false;
     var toggleIsHideInst = false;
@@ -1921,12 +1931,13 @@ video::-webkit-media-controls {
     var label_title;
 
     function init() {
-        video = document.getElementById("video");
+        video = document.getElementById("main-video");
         seek_bar = document.getElementById("seek-bar");
         startTimeText = document.getElementById("t_startTimeText");
         endTimeText = document.getElementById("t_endTimeText");
         currentTimeText = document.getElementById("t_currentTimeText");
-        instructionElement = document.getElementById("instructionsImg");
+        instructionsElement = document.getElementById("instructionsImg");
+        instructionList = document.getElementById("instructionLst");
         pageContainer = document.getElementById("pageContainer");
         mySliderBar = document.getElementById("sliderBar");
         label_minus = document.getElementById("labelMinus");
@@ -1936,6 +1947,41 @@ video::-webkit-media-controls {
        
         setInterval(function() {displayVideoCurrentTime();}, 1/FPS);
         setInterval(function() {checkAndPauseSelectionPlay();}, 1/FPS);
+
+        annotate_instructions = 
+          "<ul>"+
+          "<li><font color='red'><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>"+
+          "<li>FIRST-TIME TURKERS are encouraged to read our <a href='http://cs.cmu.edu/~dtroniak/hhm_instructions_interface.html' target='_blank'>interface how-to.</a></li>"+
+          "<li>Note: Consistently submitting high-quality work grants you access to higher-paying HITs!</li>"+
+          "<li>Goal: Denote as many ACTIONs as possible in the video provided.</li>"+
+          "<li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>"+
+          "<li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>"+
+          "<li>Acceptable work contains at least FIVE clear ACTION annotations with PRECISE start- and end-timing.</li>"+
+          "<li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>"+
+          "<li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>"+
+          "</ul>"+
+          "";
+        compare_instructions = 
+          "<ul>"+
+          "<li><font color='red'><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>"+
+          "<li>FIRST-TIME TURKERS are encouraged to read our <a href='http://cs.cmu.edu/~dtroniak/hhm_instructions_interface.html' target='_blank'>interface how-to.</a></li>"+
+          "<li>Note: Consistently submitting high-quality work grants you access to higher-paying HITs!</li>"+
+          "<li>Goal: Denote as many ACTIONs as possible in the video provided that is similar to the MASTER-ACTION.</li>"+
+          "<li>Specify how similar your selection is to the MASTER-ACTION from 'Somewhat Similar' to 'Identical'.</li>"+
+          "<li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>"+
+          "<li>Using the interface, select the PRECISE start- and end-timing of each ACTION</li>"+
+          "<li>Acceptable work contains at least FIVE clear ACTION selections with PRECISE start- and end-timing.</li>"+
+          "<li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>"+
+          "<li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>"+
+          "</ul>"+
+          "<h4>Please watch this MASTER-ACTION before attempting the HIT:</h4>"+
+          "<video tabindex='0' id='master-video' onmouseup='movieControlSeeked()' width=480 height=320 controls>"+
+            "<source src='http://www.cs.cmu.edu/~dtroniak/master-action.webm' type='video/webm' />"+
+          "</video>"+
+          "";
+        
+        instructionList.innerHTML = compare_instructions
+        //instructionList.innerHTML = annotate_instructions
         
         // Check keyboard input events
         document.onkeydown = KeyInputCheck;
@@ -1949,8 +1995,8 @@ video::-webkit-media-controls {
         
         video.addEventListener("dblclick", videoFullscreen);
 
-        video_start_time = 1;
-        video_end_time = 11;
+        video_start_time = 0;
+        video_end_time = 754;
         video_title = '';
         
         //uncomment this when deploying to mturk!!
@@ -2424,7 +2470,8 @@ video::-webkit-media-controls {
                 // Assumes the first three elements are start time, end time and tag, respectively.
                 annotEle.childNodes[0].value = startTimeText.value;
                 annotEle.childNodes[1].value = endTimeText.value;
-                annotEle.childNodes[2].value = window.prompt("Please enter a tag for this ACTION",annotEle.childNodes[2].value);
+                annotEle.childNodes[2].value = window.prompt("Please enter how similar this ACTION is to the MASTER-ACTION using a number from 1 to 5 (1 being <i>Somewhat Similar</i> and 5 being <i>Identical</i>)",annotEle.childNodes[2].value);
+                //annotEle.childNodes[2].value = window.prompt("Please enter a tag for this ACTION","");
                 //annotEle.childNodes[2].style="width: '+((annotEle.childNodes[2].value.length+1)*7)+'px; font-family:\"Courier New\"";
 
                 $("#slider_"+editAnnotID).val([startVal,endVal]);
@@ -2436,7 +2483,8 @@ video::-webkit-media-controls {
             if( isValidTimeSelection() == true ) {
                 annotCnt = annotCnt + 1;
                 annotID = "annot" + annotCnt;
-                var annotation_text = window.prompt("Please enter a tag for this ACTION","");
+                var annotation_text = window.prompt("Using a number from 1 to 5, how similar is this ACTION to the MASTER-ACTION?\n(1 = Somewhat Similar ... 5 = Identical)");
+                //var annotation_text = window.prompt("Please enter a tag for this ACTION","");
                 newAnnotation(divName,annotID,startTimeText.value,endTimeText.value,annotation_text);
                 //newAnnotationSlider(annotID,startTimeText.value,endTimeText.value,annotation_text);
                 
@@ -2554,12 +2602,12 @@ video::-webkit-media-controls {
     
     function hideShowInstructions() {
         if( toggleIsHideInst == true ) {
-            instructionElement.style.display = "";
+            instructionsElement.style.display = "";
             pageContainer.style.height = "1100";
             toggleIsHideInst = false;
         }
         else {
-            instructionElement.style.display = "none";
+            instructionsElement.style.display = "none";
             pageContainer.style.height = "650";
             toggleIsHideInst = true;
         }
@@ -2611,39 +2659,24 @@ video::-webkit-media-controls {
         <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
         </br>
         <div id="instructionsImg" >
-            <h2>Task Instructions</h1>
-            <ul>
-                <li><font color="red"><b>***  Currently, only the *Chrome* web-browser is supported  !!!</b></font></li>
-                <br/>
-                <li>FIRST-TIME TURKERS are encouraged to read our <a href="http://cs.cmu.edu/~dtroniak/hhm_instructions_interface.html" target="_blank">interface how-to.</a></li>
-                <br/>
-                <li>Note: Consistently submitting high-quality work grants you access to higher-paying HITs!</li>
-                <br/>
-                <li>Goal: Denote as many ACTIONs as possible in the video provided.</li>
-                <br/>
-                <li>An ACTION is defined as a single UNAMBIGUOUS motion performed by the PRIMARY subject.</li>
-                <br/>
-                <li>Using the interface, annotate the PRECISE start- and end-timing of each ACTION</li>
-                <br/>
-                <li>Acceptable work contains at least FIVE clear ACTION annotations with PRECISE start- and end-timing.</li>
-                <br/>
-                <li>BONUS pay (equivalent to the HIT reward) is awarded for every FIVE ADDITIONAL ACCEPTABLE annotations.</li>
-                <br/>
-                <li>Note: you can annotate FASTER by learning the keyboard hotkeys!!!</li>
-            </ul>
-            <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
+          <h2>Task Instructions</h2> 
+          <div id="instructionLst"></div> 
         </div>
+        <input id="b_hideShowInstructions" class="hideShowInstructionsButton" value="Hide/Show Instructions" onclick="hideShowInstructions()" type="button">
+        </br>
         <div id="label-container" class="label-container">
             <label id="label_title" class="videoLabels">Description: </label>
         </div>
     </div>
     <div id="movieArea">
         <div id="video-container">
-            <video tabindex="0" id="video" onmouseup="movieControlSeeked()" 
+            <video tabindex="0" id="main-video" onmouseup="movieControlSeeked()" 
                     onplay="movieControlPlay()" onpause="movieControlPause()" width=480 height=320 >
                 <source src="${video_url_mp4}" type="video/mp4" />
                 <source src="${video_url_webm}" type="video/webm" />
+                <source src="http://www.cs.cmu.edu/~dtroniak/nsh_shop_120.webm" type="video/webm" />
                 <source src="http://www.cs.cmu.edu/~dtroniak/test.webm" type="video/webm" />
+                <source src="file:///Users/troniak/Documents/cmu/siggraph/se-joon-asia/trial_08_quadratic.avi" type="video/avi" />
             </video>
             <div id="video-controls">
                 <input type="range" class="seek-bar" id="seek-bar" value="0" step="0.1" max="100">

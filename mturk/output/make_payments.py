@@ -121,7 +121,7 @@ def pay_bonuses(bonuses,i):
     print 'bonus not paid'
 
 mturk = new_mturk_connection()
-mturk.assign_qualification('3FQWXCP5BAA4IJ9RR8PWI2Z94YQ4HQ', 'A1CIIX0CB0GR7H')
+#mturk.assign_qualification('3FQWXCP5BAA4IJ9RR8PWI2Z94YQ4HQ', 'A2V3P1XE33NYC3')
 bonuses = {}
 submit_counts = {}
 annotation_counts = {}
@@ -150,6 +150,8 @@ for hit in hits:
         #output_headers += [hit.WorkerID]
         headers = ['HITId', 'WorkerID','Input.title','Input.start_time','Input.end_time','Answer.endTimeList','Answer.noMoreActions','Answer.startTimeList']
         assignments = mturk.get_assignments(hit.HITId)
+        #reward = hit.Reward
+        #print reward
         for assignment in assignments:
             #if(1):
             if(assignment.AssignmentStatus == 'Submitted'):
@@ -190,8 +192,8 @@ for hit in hits:
                     #print 'annotations_str: ' + annotations_str
                     #print 'numwords: %d' % numwords
                     #print 'numannotations: %d' % numannotations
-                    bonus = max(0,numannotations-5) / 5.0 * 0.5;
-                    bonus = floor(bonus*2)/2.0
+                    bonus = floor(max(0,numannotations-5) / 5.0 * 2) / 2.0 * 0.55;
+                    #bonus = floor(bonus*2)/2.0
                     print 'bonus: ' + str(bonus)
                     increment_dict(bonuses, assignment.WorkerId, [[assignment.AssignmentId, bonus, (numannotations-5)/5*5]])
                     increment_dict(submit_counts, assignment.WorkerId, 1)
