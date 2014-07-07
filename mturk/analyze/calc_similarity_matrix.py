@@ -28,11 +28,16 @@ def increment_dict_elementwise(diction, key, array_increment):
     else:
         diction[key] = array_increment
 
-def divide_dict_elementwise(d1,d2):
-  d3 = dict((k, float(d1[k]) / float(d2[k])) for k in d2)
+def divide_dict_array_elementwise(d1,d2):
+  d3 = dict((k, divide_array_by_scalar(d1[k], float(d2[k]))) for k in d2.keys())
   return d3
+
+def divide_dict_elementwise(d1,d2):
+  d3 = dict((k, float(d1[k]) / float(d2[k])) for k in d2.keys())
+  return d3
+
 def divide_dict(d1,n):
-  d3 = dict((k, float(d1[k]) / float(n)) for k in d1)
+  d3 = dict((k, float(d1[k]) / float(n)) for k in d1.keys())
   return d3
 
 def divide_array_by_scalar(a,s):
@@ -47,42 +52,56 @@ rowsIter = iter(csvreader)
 output_headers = next(rowsIter)
 #print output_headers
 rows = [[]]
+workerIds = {}
 for rowsA in rowsIter:
   rows += [rowsA]
+  increment_dict(workerIds,rowsA[output_headers.index('WorkerId')],1)
 
 dummy_similarities    = rows[1][output_headers.index('Answer.similarity')].split('|')
 distance_matrix = zeros(shape=(len(dummy_similarities),len(dummy_similarities)))
 #distance_matrix = []
 
-sum_distance_matrix_rows = {}
-count_distance_matrix_rows = {}
-count_matrix_row = {}
-for row in rows:
-  if(len(row) > 0):
-    hitId           = row[output_headers.index('HITId')]
-    workerId        = row[output_headers.index('WorkerId')]
-    status          = row[output_headers.index('AssignmentStatus')]
-    file_reference  = row[output_headers.index('Input.file_reference')]
-    r_start_time    = float(row[output_headers.index('Input.reference_start_time')])
-    r_end_time      = float(row[output_headers.index('Input.reference_end_time')])
-    c_files         = row[output_headers.index('Input.files_tocompare')].split('|')
-    c_start_times   = [float(s) for s in row[output_headers.index('Input.tocompare_start_times')].split('|')]
-    c_end_times     = [float(s) for s in row[output_headers.index('Input.tocompare_end_times')].split('|')]
-    similarities    = [int(s) for s in row[output_headers.index('Answer.similarity')].split('|')]
-    #distance_matrix+= [similarities]
+def calc_for_worker(rows,target_worker):
+  sum_distance_matrix_rows = {}
+  count_distance_matrix_rows = {}
+  count_matrix_row = {}
+  for row in rows:
+    if(len(row) > 0):
+      hitId           = row[output_headers.index('HITId')]
+      workerId        = row[output_headers.index('WorkerId')]
+      status          = row[output_headers.index('AssignmentStatus')]
+      file_reference  = row[output_headers.index('Input.file_reference')]
+      r_start_time    = float(row[output_headers.index('Input.reference_start_time')])
+      r_end_time      = float(row[output_headers.index('Input.reference_end_time')])
+      c_files         = row[output_headers.index('Input.files_tocompare')].split('|')
+      c_start_times   = [float(s) for s in row[output_headers.index('Input.tocompare_start_times')].split('|')]
+      c_end_times     = [float(s) for s in row[output_headers.index('Input.tocompare_end_times')].split('|')]
+      similarities    = [int(s) for s in row[output_headers.index('Answer.similarity')].split('|')]
+      #distance_matrix+= [similarities]
 
-    sum_distance_matrix_row = {}
-    for c_file,c_start_time,c_end_time,similarity in zip(c_files,c_start_times,c_end_times,similarities):
-      increment_dict(sum_distance_matrix_row,c_start_time,similarity)
-    sum_distance_matrix_row_array = odict(sorted(sum_distance_matrix_row.items())).values()
-    increment_dict_elementwise(sum_distance_matrix_rows,r_start_time,sum_distance_matrix_row_array)
-    increment_dict(count_distance_matrix_rows,r_start_time,1)
+      if(workerId == target_worker):
+        sum_distance_matrix_row = {}
+        for c_file,c_start_time,c_end_time,similarity in zip(c_files,c_start_times,c_end_times,similarities):
+          #print (c_file+"|"+str(c_start_time))
+          increment_dict(sum_distance_matrix_row,str(c_end_time-c_start_time),similarity)
+        print odict(sorted(sum_distance_matrix_row.items()))
+        sum_distance_matrix_row_array = odict(sorted(sum_distance_matrix_row.items())).values()
+        increment_dict_elementwise(sum_distance_matrix_rows,str(r_end_time-r_start_time),sum_distance_matrix_row_array)
+        increment_dict(count_distance_matrix_rows,str(r_end_time-r_start_time),1)
 
-#dict to sorted array:
-sum_distance_matrix_rows = odict(sorted(sum_distance_matrix_rows.items())).values()
-count_distance_matrix_rows = odict(sorted(count_distance_matrix_rows.items())).values()
-mean_distance_matrix = [divide_array_by_scalar(row, count) for row,count in zip(sum_distance_matrix_rows,count_distance_matrix_rows)]
-sio.savemat('similarity_matrix.mat', {'mean_distance_matrix':mean_distance_matrix})
+  #dict to ordered dict:
+  sum_distance_matrix_rows = odict(sorted(sum_distance_matrix_rows.items()))#.values()
+  count_distance_matrix_rows = odict(sorted(count_distance_matrix_rows.items()))#.values()
+  #mean_distance_matrix = [divide_array_by_scalar(row, count) for row,count in zip(sum_distance_matrix_rows,count_distance_matrix_rows)]
+  mean_distance_matrix = divide_dict_array_elementwise(sum_distance_matrix_rows,count_distance_matrix_rows)
+  print "WID: " + target_worker
+  print "MDM: " ,
+  print mean_distance_matrix
+  sio.savemat('similarity_matrix_'+target_worker+'.mat', {'mean_distance_matrix':odict(sorted(mean_distance_matrix.items())).values()})
+  sio.savemat('similarity_header_'+target_worker+'.mat', {'mean_distance_header':odict(sorted(mean_distance_matrix.items())).keys()})
+
+for workerId in workerIds.keys():
+  calc_for_worker(rows, workerId)
 
 """
 mean_distance_matrix = {}
