@@ -1,3 +1,4 @@
+#presents all annotations from all workers as a collection of vertically-spaced line segments (start frame to end frame)
 import csv
 import sys
 import re

@@ -1,0 +1,42 @@
+matrix_files = dir('output/similarity_matrix_*.mat');
+header_files = dir('output/similarity_header_*.mat');
+full_header = {'5.0';'5.04';'5.64';'6.12';'6.76';'6.8';'9.68'};
+header_labels = {'dressing';'mdew-place';'soda-cup';'mdew-pick';'salad';'soymilk';'pizza'};
+for files = [matrix_files'; header_files']
+    clearvars -except matrix_files header_files files full_header full_header1 full_header2 header_labels
+    load(['output/' files(1).name]);
+    load(['output/' files(2).name]);
+    mean_similarity_header
+    mean_similarity_matrix
+    D = mean_similarity_matrix;
+    H = mean_similarity_header;
+    data_labels = cellstr(num2str(nan(size(full_header,1),1)));
+    full_distance_matrix = ones(size(full_header)).*10;
+    
+    [tf,loc] = ismember(H,full_header);
+    full_distance_matrix(:,loc) = D';
+    D2 = full_distance_matrix;
+    %loc = sort(loc);
+    %data_labels(size(data_labels,1)-size(loc,1)+1:end) = header_labels(loc);
+
+    
+    Hfig = figure();
+    colormap('gray');
+    imagesc(D2);
+    colorbar;
+    title(strrep(files(1).name(1:end-4),'_',' '));
+    set(gca,'XTickLabel',header_labels,'YTickLabel',header_labels)
+    print('-dpng',[files(1).name(1:end-4) '.png']);
+    pause;
+    close all
+    
+    L = tril(D2);
+    U = triu(D2);
+    D2 = L';%U;%(L'+U)./2;
+    D3 = D2 - D2.*eye(size(D2)); %zeros on diagonal
+    D3 = D3 + D3';
+    
+    %MDS = mdscale(D3,2);
+    %scatter(MDS(:,1),MDS(:,2),'filled')
+    %text(MDS(:,1)+.1, MDS(:,2)+.1,labels,'FontSize',16)
+end

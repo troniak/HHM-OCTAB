@@ -1,4 +1,4 @@
-%load('annotation_matrix.mat')
+load('annotation_matrix.mat')
 %frames= annotation_matrix(first_frame:last_frame-1,first_frame:last_frame-1);
 frames  = annotation_matrix;
 tags    = tag_matrix;

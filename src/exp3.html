@@ -139,35 +139,23 @@ h3 {
   vertical-align: middle;
 }
 </style>
-<div id="guideline_box">
-  <span class="bold_text">Detailed Instructions (click) <span id="guideline_arrow">&rarr;</span></span>
-  <div id="guideline" class="instruction_text" style="display:none">
-    <font color="red">GOAL</font>: Select how similar each action is to the given reference action AND determine what is most similar and most different between the two actions.</br>
-    <font color="red">TIP</font>: When determining similarity between two actions, look out for things such similar object(s) in the scene, direction of action, fingers used, etc.
-  </div>
-</div><br/>
 
 <span style="font: arial; font-size: 14px; font-weight:bold;">Step 1 - Watch the reference action (click to play):</span>
 <div style='width:70%; margin:auto;'>
   <video id="vid_0" class="question_image">
     <source src="http://www.cs.ubc.ca/~troniak/${file_reference}.webm" type="video/webm"/>
-    <source src="http://www.cs.cmu.edu/~dtroniak/nsh_shop_120.webm" type="video/webm"/>
+    <source src="http://www.cs.cmu.edu/~dtroniak/mdew_bottle_pick.webm" type="video/webm"/>
   </video>
 </div>
 
 <div id="step_2" class="outer_div"
-  <span style="font: arial; font-size: 14px; font-weight:bold;">Step 2 - For each of the actions below, please do the following:</span>
-  <ol>
-    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Select its LEVEL OF SIMILARITY to the reference action.</span></li>
-    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Tell us what aspect is MOST SIMILAR to the reference action.</span></li>
-    <li><span style="font: arial; font-size: 14px; font-weight:bold;">Tell us what aspect is MOST DIFFERENT from the reference action.</span></li>
-  </ol>
+  <span style="font: arial; font-size: 14px; font-weight:bold;">Step 2 - For each of the actions below, select if they are more, less or equal to the reference action in terms of <span style="font:arial; font-size: 22px; font-weight:bold;">${compare_element}</span> :</span>
   <div id="vidContainer">
   </div>
 </div>
 
 <script type="text/javascript">
-  var similarity_levels = ["Not-at-all Similar","","Sort-of Similar","","Moderately Similar","","Very Similar","","Identical"];
+  var similarity_levels = ["Less","Same","More"];
   var reference_vid;
   var stArr, etArr;
   
@@ -179,9 +167,9 @@ h3 {
     reference_vid.addEventListener("timeupdate", function(){vid_timeupdate(0);});
     reference_vid.addEventListener("click", function(){vid_play(0);});
     
-    filesStr = 'nsh_shop_120|nsh_shop_120|nsh_shop_120'
-    stsStr = '5|5|3|10'
-    etsStr = '6|8|5|14'
+    filesStr = 'soymilk_pick|dressing_packet_pick'
+    stsStr = '0|0|0'
+    etsStr = '6.12|6.8|5'
     /*deploy_start
     filesStr = '${files_tocompare}';
     stsStr = '${reference_start_time}'+'|${tocompare_start_times}'
@@ -244,8 +232,6 @@ function vid_play(vidCnt){
     }
     innerHTML = innerHTML + '</tr>';
     innerHTML = innerHTML + '</table>';
-    innerHTML = innerHTML + '<input type="text" onClick="this.select()" value="Please enter the most SIMILAR aspect" class="similarity_text" id="similarity_text_'+scaleID+'" name="similarity_same_'+scaleID+'"/>';
-    innerHTML = innerHTML + '<input type="text" onClick="this.select()" value="Please enter the most DIFFERENT aspect" class="similarity_text" id="similarity_text_'+scaleID+'" name="similarity_diff_'+scaleID+'"/>';
     innerHTML = innerHTML + '</div>';
     var newdiv = document.createElement("div");
     newdiv.setAttribute("class", "similarity_input");

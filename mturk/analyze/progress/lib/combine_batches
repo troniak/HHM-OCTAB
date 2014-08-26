@@ -1,0 +1,10 @@
+#!/bin/bash
+#cp $1 temp1
+#echo '' >> temp1
+#tail -n +2 $2 >> temp2
+#cat temp1 temp2 > combined.csv
+#rm temp1 temp2
+rm combined.csv
+header=$(head -n 1 $1)
+for file in $(eval echo $@); do echo "$(tail -n +2 $file)" >> combined.csv; done
+echo $header | cat - combined.csv > xxtmp && mv xxtmp combined.csv
